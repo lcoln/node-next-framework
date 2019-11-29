@@ -2,9 +2,9 @@ const tech = require('./libs/main')
 const app = new tech()
 const { resolve } = Utils
 const env = process.env.NODE_ENV
-const aow = require('./config/white/allow_origin_white')
+/* const aow = require('./config/white/allow_origin_white')
 const sessionConfig = require(`./config/cache/${env}_redis`)
-const dbConfig = require(`./config/db/${env}_db`)
+const dbConfig = require(`./config/db/${env}_db`) */
 
 app.set({
   BASE: __dirname,
@@ -14,13 +14,13 @@ app.set({
   TOOLS: resolve(__dirname, './libs/tools'),
   ISDEBUG: env === 'development' ? true : false,
   THROWERROR: [],
-  session: {
+  /* session: {
     strict: true,   //ip + useragent
     ...sessionConfig
   },
   db: {
     ...dbConfig
-  },
+  }, */
   jwt: {
     screct: '1111111',
     white: ['login']     // jwt白名单里的不进行token判断
@@ -35,7 +35,7 @@ app.set({
   },
 })
 app.use(function (req, res, next) {
-  aow.includes(req.origin) && res.set('Access-Control-Allow-Origin', req.origin)
+  // aow.includes(req.origin) && res.set('Access-Control-Allow-Origin', req.origin)
   this.mysql = new this.mysql(this.get('db'))
   /*this.mysql = new this.mysql({
     host: 'localhost', // IP/域名
