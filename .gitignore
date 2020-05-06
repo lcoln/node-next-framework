@@ -1,2 +1,8 @@
 /node_modules
+/apps
+/config
+/data
+/pages
+/.next
 /nohup.out
+/app.js

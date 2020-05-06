@@ -15,6 +15,10 @@
     "ioredis": "^4.14.0",
     "mysql": "^2.17.1",
     "mysqli": "^3.0.6",
-    "querystring": "^0.2.0"
-  }
+    "next": "^9.3.6",
+    "querystring": "^0.2.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  },
+  "devDependencies": {}
 }
