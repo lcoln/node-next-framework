@@ -8,3 +8,4 @@
 /app.js
 /public
 /projects/*
+.DS_Store

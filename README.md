@@ -1,6 +1,7 @@
 # node-framework
 # 项目远程目录 /www.upgrade/node-next-framework
 # 本地文件夹名称恒为node-next-framework
+# 如果工程里无projects目录，请新建projects目录，运行项目则是需要将项目clone进projects目录
 
 > node项目框架
 
