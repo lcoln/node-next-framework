@@ -41,10 +41,10 @@ class Controller {
     return this.template.render(content)
   } */
 
-  render (path) {
+  render (path, params) {
     const { req, pathname, query } = this.request
     const { res } = this.response
-    this.ctx.app.render(req, res, path || pathname, query)
+    this.ctx.app.render(req, res, path || pathname, params || query)
   }
 
   assign (k, v) {
