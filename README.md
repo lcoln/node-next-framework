@@ -1,4 +1,6 @@
 # node-framework
+# 项目远程目录 /www.upgrade/node-next-framework
+# 本地文件夹名称恒为node-next-framework
 
 > node项目框架
 
