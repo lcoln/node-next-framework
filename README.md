@@ -9,6 +9,9 @@
 # 安装依赖
 npm install
 
+# 启动项目
+node projects/${project}/app.js
+
 # 创建redis主从配置文件
 #!/bin/bash
 echo "sentinel myid cf1de9ff79255c919b9d2f3bc8afdc2b4b9d0c74
