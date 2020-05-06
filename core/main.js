@@ -9,28 +9,31 @@ const Mysql = require('./dbmanager/mysql')
 const utils = require('./tools/utils')
 const crypto = require('crypto.js')
 const config = require('./configure')
+const path = require('path')
 // let Mysql = require('mysqli')
 const next = require('next')
-
 const dev = process.env.NODE_ENV !== 'production'
-const app = next({ dev })
 
 class M {
-  constructor(dir) {
+  constructor(rootDir) {
     global.Controller = require('./renderer/controller')
     global.Utils = utils(this)
     global.Sec = crypto
     this.__CONFIG__ = config() || {}
     this.__QUEUE__ = []
-    this._init()
+    this._init(rootDir)
   }
 
-  _init () {
+  _init (rootDir) {
     this.jwt = Utils.bind(require('./session/jwt'))
     this.template = Utils.bind(require('./renderer/template'))
     this.router = new Router()
     this.cookie = new Cookie(this)
     this.mysql = Mysql
+    this.ssr = next({ 
+      dev,
+      dir: rootDir
+    })
     // this.mysql = new Mysql(this.get('db'))
   }
 
@@ -66,13 +69,12 @@ class M {
   }
   
   start (port) {
-    app.prepare().then(() => {
+    this.ssr.prepare().then(() => {
       Http
       .createServer(async (request, response) => {
         this.request = new Request(request)
         this.response = new Response(response)
         this.session = new Redis(this.get('session') || {}, this)
-        this.app = app
         let _this = this
         ;(async function next () {
           if (!_this.__QUEUE__.length) {

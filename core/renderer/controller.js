@@ -44,7 +44,7 @@ class Controller {
   render (path, params) {
     const { req, pathname, query } = this.request
     const { res } = this.response
-    this.ctx.app.render(req, res, path || pathname, params || query)
+    this.ctx.ssr.render(req, res, path || pathname, params || query)
   }
 
   assign (k, v) {

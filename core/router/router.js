@@ -20,7 +20,7 @@ class M {
       if (/_next/.test(act)) {
         const { req, pathname, query } = this.request
         const { res } = this.response
-        this.app.render(req, res, pathname, query)
+        this.ssr.render(req, res, pathname, query)
       } else {
         // 否则走接口
         let apps = require(Utils.resolve(APPS, act, 'controller'))
