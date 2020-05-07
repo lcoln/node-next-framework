@@ -19,6 +19,7 @@ class M {
     global.Controller = require('./renderer/controller')
     global.Utils = utils(this)
     global.Sec = crypto
+    global.APP = this
     this.__CONFIG__ = config() || {}
     this.__QUEUE__ = []
     this._init(rootDir)

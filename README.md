@@ -1,8 +1,12 @@
 # node-framework
-# 项目远程目录 /www.upgrade/node-next-framework
-# 本地文件夹名称恒为node-next-framework
-# 如果工程里无projects目录，请新建projects目录，运行项目则是需要将项目clone进projects目录
-
+### 项目远程目录 /www.upgrade/node-next-framework
+### 本地文件夹名称恒为node-next-framework
+### 如果工程里无projects目录，请新建projects目录，运行项目则是需要将项目clone进projects目录
+#### 实例化后全局默认挂载以下参数
+    APP // 框架实例，可以通过APP.get(key)获取全局配置
+    Controller // 控制类, extends该控制类可获取session等实例
+    Utils // 全局工具函数库
+    Sec // 全局加密库
 > node项目框架
 
 ## Build Setup
