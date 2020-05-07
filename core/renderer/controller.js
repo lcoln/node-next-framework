@@ -50,6 +50,17 @@ class Controller {
   assign (k, v) {
     return this.template.assign(k, v)
   }
+
+  checkFields(para, fields){
+    if(Object.empty(para))
+        return 'params'
+
+    for(let it of fields){
+        if(!para[it] && para[it] !== 0)
+            return it
+    }
+    return true
+  }
 }
 
 module.exports = Controller
