@@ -304,7 +304,6 @@ module.exports = class Database {
   }
 
   query(sql) {
-    const t = new Table(this);
-    return t.query(sql);
+    return new Table(this).query(sql);
   }
 };

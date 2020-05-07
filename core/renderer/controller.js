@@ -1,30 +1,31 @@
-const fs = require('iofs')
+const fs = require('iofs');
+
 class Controller {
   constructor(ctx) {
-    this.request = ctx.request
-    this.response = ctx.response
-    this.session = ctx.session
-    this.cookie = ctx.cookie
-    this.jwt = ctx.jwt
-    this.template = ctx.template
-    this.ctx = ctx
-    this._init()
+    this.request = ctx.request;
+    this.response = ctx.response;
+    this.session = ctx.session;
+    this.cookie = ctx.cookie;
+    this.jwt = ctx.jwt;
+    this.template = ctx.template;
+    this.ctx = ctx;
+    this._init();
   }
 
-  _init () {
-    let jwt = this.ctx.get('jwt')
+  _init() {
+    const jwt = this.ctx.get('jwt');
     if (jwt) {
       // this.jwtPass = this.jwt.verify()
     } else {
-      !this.session.isStart && this.session.start()
-      let cookieConfig = this.ctx.get('cookie')
+      !this.session.isStart && this.session.start();
+      const cookieConfig = this.ctx.get('cookie');
       if (cookieConfig) {
-        let cookie = this.request.headers('cookie')
-        let cookieInfo = `NODESSID=${this.session.uuid}; `
-        for (let i in cookieConfig) {
-          cookieInfo += `${i}=${cookieConfig[i]}; `
+        const cookie = this.request.headers('cookie');
+        let cookieInfo = `NODESSID=${this.session.uuid}; `;
+        for (const i in cookieConfig) {
+          cookieInfo += `${i}=${cookieConfig[i]}; `;
         }
-        !this.session.verify(cookie) && this.cookie.set('Set-Cookie', cookieInfo)
+        !this.session.verify(cookie) && this.cookie.set('Set-Cookie', cookieInfo);
       }
     }
   }
@@ -41,26 +42,24 @@ class Controller {
     return this.template.render(content)
   } */
 
-  render (path, params) {
-    const { req, pathname, query } = this.request
-    const { res } = this.response
-    this.ctx.ssr.render(req, res, path || pathname, params || query)
+  render(path, params) {
+    const { req, pathname, query } = this.request;
+    const { res } = this.response;
+    this.ctx.ssr.render(req, res, path || pathname, params || query);
   }
 
-  assign (k, v) {
-    return this.template.assign(k, v)
+  assign(k, v) {
+    return this.template.assign(k, v);
   }
 
-  checkFields(para, fields){
-    if(Object.empty(para))
-        return 'params'
+  checkFields(para, fields) {
+    if (Object.empty(para)) { return 'params'; }
 
-    for(let it of fields){
-        if(!para[it] && para[it] !== 0)
-            return it
+    for (const it of fields) {
+      if (!para[it] && para[it] !== 0) { return it; }
     }
-    return true
+    return true;
   }
 }
 
-module.exports = Controller
+module.exports = Controller;
