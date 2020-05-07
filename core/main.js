@@ -1,4 +1,4 @@
-require('./tools/es.shim');
+require('../libs/es.shim');
 const Http = require('http');
 const Crypto = require('crypto.js');
 const Next = require('next');
@@ -11,7 +11,7 @@ const Redis = require('./session/redis');
 const Cookie = require('./session/cookie');
 const Mysql = require('./dbmanager/mysql');
 
-const utils = require('./tools/utils');
+const utils = require('../libs/utils');
 const config = require('./configure');
 // let Mysql = require('mysqli')
 const dev = process.env.NODE_ENV !== 'production';
