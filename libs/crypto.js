@@ -11,17 +11,13 @@ let crypto = require('crypto')
 let NodeRSA = require('node-rsa');
 const MAX_DECRYPT_BLOCK = 128 		//RSA最大解密密文大小
 
-const PUBLIC_KEY = Fs.read(`${BASE}core/crypto/rsa_public_key.pem`) + ''
-
-const PRIVATE_KEY = Fs.read(`${BASE}core/crypto/rsa_private_key.pem`) + ''
-
 class RSA {
 	
 	constructor(c){
 
 		/*this.RSA_PUBLIC_KEY = new NodeRSA({b: 1024}); 		//1024位加密
 		this.RSA_PUBLIC_KEY.setOptions({encryptionScheme: 'pkcs1'}) 		//RSA公开密钥算法加密和签名机制
-		this.RSA_PUBLIC_KEY.importKey(PUBLIC_KEY)*/
+		this.RSA_PUBLIC_KEY.importKey(RSA.PUBLIC_KEY)*/
 	}
 
 	checkType(data){
@@ -52,10 +48,10 @@ class RSA {
 		let RSA_KEY = new NodeRSA({b: 1024}); 		//1024位加密
 		RSA_KEY.setOptions({encryptionScheme: 'pkcs1'}) 		//RSA公开密钥算法加密和签名机制
 		if(act === 'public'){
-			RSA_KEY.importKey(PUBLIC_KEY)
+			RSA_KEY.importKey(RSA.PUBLIC_KEY)
 			data = RSA_KEY.encrypt(JSON.stringify(data), 'base64')
 		}else{
-			RSA_KEY.importKey(PRIVATE_KEY)
+			RSA_KEY.importKey(RSA.PRIVATE_KEY)
 			data = RSA_KEY.encryptPrivate(JSON.stringify(data), 'base64')
 		}
 
@@ -69,13 +65,13 @@ class RSA {
 		let decryptedData = null
 		if(act === 'private'){
 			try{
-				decryptedData = crypto.privateDecrypt({key: PRIVATE_KEY, padding: crypto.constants.RSA_PKCS1_PADDING}, Buffer.from(str))
+				decryptedData = crypto.privateDecrypt({key: RSA.PRIVATE_KEY, padding: crypto.constants.RSA_PKCS1_PADDING}, Buffer.from(str))
 			}catch(e){
 				return e + ''
 			}
 		}else{
 			try{
-				decryptedData = crypto.publicDecrypt({key: PUBLIC_KEY, padding: crypto.constants.RSA_PKCS1_PADDING}, Buffer.from(str))
+				decryptedData = crypto.publicDecrypt({key: RSA.PUBLIC_KEY, padding: crypto.constants.RSA_PKCS1_PADDING}, Buffer.from(str))
 			}catch(e){
 				return e + ''
 			}
@@ -114,7 +110,7 @@ class RSA {
     	data = JSON.stringify(data)
     sign.write(data);
     sign.end();
-    var caiqrSignature = sign.sign(PRIVATE_KEY, 'base64');
+    var caiqrSignature = sign.sign(RSA.PRIVATE_KEY, 'base64');
     return caiqrSignature
 	}
 
@@ -126,7 +122,7 @@ class RSA {
 	    verify.write(data);
 	    verify.end();
 	    const signature = new Buffer(sign,'base64');
-	    return verify.verify(PUBLIC_KEY, signature)
+	    return verify.verify(RSA.PUBLIC_KEY, signature)
 	}
 
 	cipheriv_encode(str, key, iv = null){
@@ -176,5 +172,8 @@ class RSA {
 	    return cipherChunks.join('');
 	}
 }
+
+RSA.PUBLIC_KEY = Fs.read(`../config/rsa_public_key.pem`) + ''
+RSA.PRIVATE_KEY = Fs.read(`../config/rsa_private_key.pem`) + ''
 
 module.exports = RSA
