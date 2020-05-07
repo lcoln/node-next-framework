@@ -10,16 +10,6 @@ function bind(ctx) {
   return ctx;
 }
 
-function checkFields(para, fields) {
-  if (Object.empty(para)) { return 'params'; }
-
-  // eslint-disable-next-line no-unused-vars
-  for (const it of fields) {
-    if (!para[it] && para[it] !== 0) { return it; }
-  }
-  return true;
-}
-
 function isFunction(obj) {
   return typeof obj === 'function';
 }
@@ -37,7 +27,7 @@ function isString(obj) {
 }
 
 function sleep(time = 1000) {
-  return new Promise((yes, no) => {
+  return new Promise((yes) => {
     setTimeout(() => {
       yes();
     }, time);
@@ -108,6 +98,5 @@ module.exports = function (ctx) {
     suffix,
     bind: bind.bind(ctx),
     query,
-    checkFields,
   };
 };

@@ -6,6 +6,7 @@ const Fs = require('iofs');
 const Request = require('./router/request');
 const Response = require('./router/response');
 const Router = require('./router/router');
+const RedisStrict = require('./session/redisStrict');
 const Redis = require('./session/redis');
 const Cookie = require('./session/cookie');
 const Mysql = require('./dbmanager/mysql');
@@ -76,6 +77,7 @@ class M {
         .createServer(async (request, response) => {
           this.request = new Request(request);
           this.response = new Response(response);
+          this.sessionStrict = new RedisStrict(this.get('session') || {}, this);
           this.session = new Redis(this.get('session') || {}, this);
           const _this = this;
           (async function nextFunc() {

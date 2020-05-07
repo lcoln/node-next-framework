@@ -1,9 +1,8 @@
-const fs = require('iofs');
-
 class Controller {
   constructor(ctx) {
     this.request = ctx.request;
     this.response = ctx.response;
+    this.sessionStrict = ctx.sessionStrict;
     this.session = ctx.session;
     this.cookie = ctx.cookie;
     this.jwt = ctx.jwt;
@@ -17,15 +16,20 @@ class Controller {
     if (jwt) {
       // this.jwtPass = this.jwt.verify()
     } else {
-      !this.session.isStart && this.session.start();
+      if (this.sessionStrict.isStart) {
+        this.sessionStrict.start();
+      }
       const cookieConfig = this.ctx.get('cookie');
       if (cookieConfig) {
         const cookie = this.request.headers('cookie');
-        let cookieInfo = `NODESSID=${this.session.uuid}; `;
-        for (const i in cookieConfig) {
+        let cookieInfo = `NODESSID=${this.sessionStrict.uuid}; `;
+        // eslint-disable-next-line no-unused-vars
+        for (const i of Object.keys(cookieConfig)) {
           cookieInfo += `${i}=${cookieConfig[i]}; `;
         }
-        !this.session.verify(cookie) && this.cookie.set('Set-Cookie', cookieInfo);
+        if (this.sessionStrict.verify(cookie)) {
+          this.cookie.set('Set-Cookie', cookieInfo);
+        }
       }
     }
   }
@@ -50,15 +54,6 @@ class Controller {
 
   assign(k, v) {
     return this.template.assign(k, v);
-  }
-
-  checkFields(para, fields) {
-    if (Object.empty(para)) { return 'params'; }
-
-    for (const it of fields) {
-      if (!para[it] && para[it] !== 0) { return it; }
-    }
-    return true;
   }
 }
 

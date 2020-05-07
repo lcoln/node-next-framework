@@ -57,6 +57,7 @@ module.exports = {
     "no-multiple-empty-lines": ["error", { "max": 1, "maxEOF": 1 }],     // 末尾允许并强制空1行
     // "object-curly-newline": ["error", "always"],
     // "react/jsx-indent": 2,
-    "no-underscore-dangle": 0
+    "no-underscore-dangle": 0,
+    "class-methods-use-this": 0     // class不需要强制this
    },
 };
