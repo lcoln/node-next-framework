@@ -7,6 +7,8 @@
 'use strict'
 
 let crypto = require('crypto')
+const fs = require('fs');
+const path = require('path')
 
 let NodeRSA = require('node-rsa');
 const MAX_DECRYPT_BLOCK = 128 		//RSA最大解密密文大小
@@ -173,7 +175,10 @@ class RSA {
 	}
 }
 
-RSA.PUBLIC_KEY = Fs.read(`../config/rsa_public_key.pem`) + ''
-RSA.PRIVATE_KEY = Fs.read(`../config/rsa_private_key.pem`) + ''
-
+RSA.PUBLIC_KEY = fs.readFileSync(path.resolve(__dirname, `../config/rsa_public_key.pem`), {
+	encoding: 'utf-8'
+})
+RSA.PRIVATE_KEY = fs.readFileSync(path.resolve(__dirname, `../config/rsa_private_key.pem`), {
+	encoding: 'utf-8'
+})
 module.exports = RSA
