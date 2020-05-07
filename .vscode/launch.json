@@ -15,6 +15,20 @@
       "env": {
         "MODE": "SERVER"
       },
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "debug service.igeekee.cn",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "cwd": "${workspaceFolder}/projects/service.igeekee.cn",
+      "program": "${workspaceFolder}/projects/service.igeekee.cn\\app.js",
+      "args": [],
+      "env": {
+        "NODE_ENV": "development"
+      },
     }
   ]
 }
