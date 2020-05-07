@@ -17,7 +17,7 @@ class M {
       // console.log({params})
       
       // ssr资源
-      if (/_next/.test(act)) {
+      if (/(_next|favicon.ico)/.test(act)) {
         const { req, pathname, query } = this.request
         const { res } = this.response
         this.ssr.render(req, res, pathname, query)

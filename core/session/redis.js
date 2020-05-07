@@ -13,8 +13,14 @@ class M {
     slave = sentinels && sentinels.slave ? sentinels.slave : (slave ? slave : master)
     this.isStart = false
     try {
-      this.master = new Redis(Object.assign(defaultConf, master));
-      this.slave = new Redis(Object.assign(defaultConf, slave));
+      // console.log(Object.assign(defaultConf, master))
+      if (sentinels) {
+        this.master = new Redis(Object.assign(defaultConf, master));
+        this.slave = new Redis(Object.assign(defaultConf, slave));
+      } else {
+        this.master = new Redis(master);
+        this.slave = new Redis(slave);
+      }
       this.ctx = ctx
     } catch (e) {console.log({redisErr: e})}
   }

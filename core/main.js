@@ -34,6 +34,27 @@ class M {
       dev,
       dir: rootDir
     })
+    // console.log(this.ssr)
+    /* const publish = this.ssr.hotReloader.webpackHotMiddleware.publish.bind(
+      this.ssr.hotReloader.webpackHotMiddleware,
+    );
+  
+    // Intercept publish events so we can send something custom
+    this.ssr.hotReloader.webpackHotMiddleware.publish = (event, ...rest) => {
+      let forwardedEvent = event;
+  
+      // upgrade from a "change" to a "reload" event to trick the browser into reloading
+      if (event.action === 'change') {
+        forwardedEvent = {
+          action: 'reload',
+          // Only `/_document` pages will trigger a full browser refresh, so we force it here.
+          data: [],
+        };
+      }
+  
+      // Forward the (original or upgraded) event on to the browser
+      publish(forwardedEvent, ...rest);
+    }; */
     // this.mysql = new Mysql(this.get('db'))
   }
 
