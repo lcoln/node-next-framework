@@ -1,3 +1,4 @@
+/* eslint-disable no-eval */
 const { isArray, isObject } = global.Utils;
 
 // const reg0 = /<!--{each ([\w\W].*?) in ([\w\W].*?)}-->([\s\S]*)<!--{\/each}-->/gi;
@@ -18,16 +19,19 @@ module.exports = {
   assign(ctx, key, val) {
     this._variable[key] = val;
   },
+  // eslint-disable-next-line no-unused-vars
   _fixTpl(h) {
     this._fixIf()._fixVal();
   },
   _fixVal() {
+    // eslint-disable-next-line no-unused-vars
     this.html = this.html.replace(/<!--{=([a-zA-Z.]+)}-->/g, ($1, $2, $3) => {
       // console.log({$1, $2, $3}, this._variable)
       let val = null;
       try {
-        val = new Function('o', `return o.${$2}`)(this._variable);
-        if (val || val == 0) {
+        val = this._variable[$2];
+        // val = new Function('o', `return o.${$2}`)(this._variable);
+        if (val || val === 0) {
           if (isArray(val) || isObject(val)) {
             return JSON.stringify(val);
           }
@@ -59,6 +63,8 @@ module.exports = {
       });
       /* console.log({_variable: this._variable})
       console.log($2, $2.replace(/([a-zA-Z]+)/g, 'console.log(this._variable)')) */
+      /* eslint-disable no-shadow */
+      /* eslint-disable no-unused-vars */
       if ($2 && eval($2.replace(/([a-zA-Z]+)/g, 'this._variable.$1'))) {
         return $3.replace(/(\n)([\s\S]*)(\n)/, ($1, $2, $3, $4) => $3);
       } if ($4 && eval($4.replace(/([a-zA-Z]+)/g, 'this._variable.$1'))) {
@@ -68,6 +74,8 @@ module.exports = {
       } if ($6) {
         return $6.replace(/(\n)([\s\S]*)(\n)/, ($1, $2, $3, $4) => $3);
       }
+      /* eslint-enable no-shadow */
+      /* eslint-enable no-unused-vars */
       return $1;
     });
     return this;

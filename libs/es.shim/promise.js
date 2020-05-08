@@ -4,15 +4,15 @@
  * @date    2018-08-22 22:27:19
  */
 /* eslint no-extend-native: ["error", { "exceptions": ["Promise"] }] */
-'use strict'
+'use strict';
 
 if (!Promise.defer) {
   Promise.defer = function () {
-    let obj = {}
+    const obj = {};
     obj.promise = new Promise((resolve, reject) => {
-      obj.resolve = resolve
-      obj.reject = reject
-    })
-    return obj
-  }
+      obj.resolve = resolve;
+      obj.reject = reject;
+    });
+    return obj;
+  };
 }

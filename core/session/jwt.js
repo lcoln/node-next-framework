@@ -35,6 +35,7 @@ class Jwt {
           if (tmp.expires < Date.now()) {
             return '授权已过期';
           }
+        // eslint-disable-next-line no-empty
         } catch (e) {}
         return auth.length && global.Sec.sha256(`${header}.${payload}`, screct) === signature;
       }

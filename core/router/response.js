@@ -14,8 +14,15 @@ class M {
     return this.res.getHeader(key);
   }
 
-  send(code = 200, msg, data, type = { 'Content-Type': 'application/json; charset=utf-8' }) {
-    if (this.lock) { return; }
+  send(
+    code = 200,
+    msg,
+    data,
+    type = { 'Content-Type': 'application/json; charset=utf-8' },
+  ) {
+    if (this.lock) {
+      return;
+    }
     this.res.writeHead(code, type);
     const out = { code, msg, data };
     this.end(JSON.stringify(out));
@@ -27,9 +34,14 @@ class M {
   }
 
   error(code, msg, end) {
-    if (!end) { return this.send(code, msg); }
+    if (!end) {
+      this.send(code, msg);
+      return;
+    }
     this.res.writeHead(code, { 'Content-Type': 'text/html; charset=utf-8' });
-    this.end(`<fieldset><legend>Http Status: ${code}</legend><pre>${msg}</pre></fieldset>`);
+    this.end(
+      `<fieldset><legend>Http Status: ${code}</legend><pre>${msg}</pre></fieldset>`,
+    );
   }
 }
 

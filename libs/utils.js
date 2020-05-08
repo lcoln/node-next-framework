@@ -98,11 +98,11 @@ function suffix(str) {
 /**
  * [对象深拷贝]
  */
-function deepClone (obj) {
-  var copy;
- 
+function deepClone(obj) {
+  let copy;
+
   // Handle the 3 simple types, and null or undefined
-  if (null == obj || "object" != typeof obj) return obj;
+  if (obj == null || typeof obj !== 'object') return obj;
 
   // Handle Date
   if (obj instanceof Date) {
@@ -114,7 +114,7 @@ function deepClone (obj) {
   // Handle Array
   if (obj instanceof Array) {
     copy = [];
-    for (var i = 0, len = obj.length; i < len; i++) {
+    for (let i = 0, len = obj.length; i < len; i++) {
       copy[i] = deepClone(obj[i]);
     }
     return copy;
@@ -122,13 +122,14 @@ function deepClone (obj) {
 
   // Handle RegExp
   if (obj instanceof RegExp) {
-    return new RegExp(obj)
+    return new RegExp(obj);
   }
 
   // Handle Object
   if (obj instanceof Object) {
     copy = {};
-    for (var attr in obj) {
+    let attr;
+    for (attr in obj) {
       if (obj.hasOwnProperty(attr)) copy[attr] = deepClone(obj[attr]);
     }
     return copy;

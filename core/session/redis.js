@@ -21,6 +21,7 @@ class M {
   addCommonPopAndPush() {
     Redis.Command.setReplyTransformer('get', (result) => {
       if (!result) return null;
+      return result;
     });
     Redis.Command.setReplyTransformer('set', (result) => {
       if (!result) return null;

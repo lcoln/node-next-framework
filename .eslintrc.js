@@ -10,6 +10,9 @@ module.exports = {
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
+    Sec: 'readonly',
+    Controller: 'readonly',
+    APP: 'readonly',
   },
   parserOptions: {
     ecmaFeatures: {
@@ -58,6 +61,7 @@ module.exports = {
     // "object-curly-newline": ["error", "always"],
     // "react/jsx-indent": 2,
     "no-underscore-dangle": 0,
-    "class-methods-use-this": 0     // class不需要强制this
+    "class-methods-use-this": 0,     // class不需要强制this
+    "guard-for-in":"off"
    },
 };
