@@ -1,118 +1,102 @@
-require('./tools/es.shim')
-const Http = require('http')
-const Request = require('./router/request')
-const Response = require('./router/response')
-const Router = require('./router/router')
-const Redis = require('./session/redis')
-const Cookie = require('./session/cookie')
-const Mysql = require('./dbmanager/mysql')
-const utils = require('./tools/utils')
-const crypto = require('crypto.js')
-const config = require('./configure')
-const path = require('path')
+require('../libs/es.shim');
+const Http = require('http');
+const Crypto = require('crypto.js');
+const Next = require('next');
+const Fs = require('iofs');
+const Request = require('./router/request');
+const Response = require('./router/response');
+const Router = require('./router/router');
+const RedisStrict = require('./session/redisStrict');
+const Redis = require('./session/redis');
+const Cookie = require('./session/cookie');
+const Mysql = require('./dbmanager/mysql');
+
+const utils = require('../libs/utils');
+const config = require('./configure');
 // let Mysql = require('mysqli')
-const next = require('next')
-const dev = process.env.NODE_ENV !== 'production'
+const dev = process.env.NODE_ENV !== 'production';
 
 class M {
   constructor(rootDir) {
-    global.Controller = require('./renderer/controller')
-    global.Utils = utils(this)
-    global.Sec = crypto
-    global.APP = this
-    this.__CONFIG__ = config() || {}
-    this.__QUEUE__ = []
-    this._init(rootDir)
+    global.Controller = require('./renderer/controller');
+    global.Utils = utils(this);
+    global.Sec = Crypto;
+    global.Fs = Fs;
+    global.APP = this;
+    this.__CONFIG__ = config() || {};
+    this.__QUEUE__ = [];
+    this._init(rootDir);
   }
 
-  _init (rootDir) {
-    this.jwt = Utils.bind(require('./session/jwt'))
-    this.template = Utils.bind(require('./renderer/template'))
-    this.router = new Router()
-    this.cookie = new Cookie(this)
-    this.mysql = Mysql
-    this.ssr = next({ 
+  _init(rootDir) {
+    this.jwt = global.Utils.bind(require('./session/jwt'));
+    this.template = global.Utils.bind(require('./renderer/template'));
+    this.router = new Router();
+    this.cookie = new Cookie(this);
+    this.mysql = Mysql;
+    this.ssr = Next({
       dev,
-      dir: rootDir
-    })
-    // console.log(this.ssr)
-    /* const publish = this.ssr.hotReloader.webpackHotMiddleware.publish.bind(
-      this.ssr.hotReloader.webpackHotMiddleware,
-    );
-  
-    // Intercept publish events so we can send something custom
-    this.ssr.hotReloader.webpackHotMiddleware.publish = (event, ...rest) => {
-      let forwardedEvent = event;
-  
-      // upgrade from a "change" to a "reload" event to trick the browser into reloading
-      if (event.action === 'change') {
-        forwardedEvent = {
-          action: 'reload',
-          // Only `/_document` pages will trigger a full browser refresh, so we force it here.
-          data: [],
-        };
-      }
-  
-      // Forward the (original or upgraded) event on to the browser
-      publish(forwardedEvent, ...rest);
-    }; */
-    // this.mysql = new Mysql(this.get('db'))
+      dir: rootDir,
+    });
   }
 
-  set (obj) {
-    for (let i in obj) {
-      if (!Utils.isArray(obj[i])) {
+  set(obj) {
+    // eslint-disable-next-line no-unused-vars
+    for (const i in obj) {
+      if (!global.Utils.isArray(obj[i])) {
         if (!this.__CONFIG__[i]) {
-          this.__CONFIG__[i] = obj[i]
+          this.__CONFIG__[i] = obj[i];
         } else {
           try {
-            Object.assign(this.__CONFIG__, obj)
+            Object.assign(this.__CONFIG__, obj);
           } catch (err) {
-            console.log(err)
+            console.log(err);
           }
         }
       } else {
-        this.__CONFIG__[i] = obj[i]
+        this.__CONFIG__[i] = obj[i];
       }
     }
-    return this
+    return this;
   }
 
   // 获取全局配置
-  get (key) {
-    if (!key)
-      return this.__CONFIG__
+  get(key) {
+    if (!key) { return this.__CONFIG__; }
     try {
-      return this.__CONFIG__[key]
+      return this.__CONFIG__[key];
     } catch (err) {
-      console.log(err)
-      return null
+      console.log(err);
+      return null;
     }
   }
-  
-  start (port) {
+
+  start(port) {
     this.ssr.prepare().then(() => {
       Http
-      .createServer(async (request, response) => {
-        this.request = new Request(request)
-        this.response = new Response(response)
-        this.session = new Redis(this.get('session') || {}, this)
-        let _this = this
-        ;(async function next () {
-          if (!_this.__QUEUE__.length) {
-            return
-          }
-          let cb = _this.__QUEUE__.shift()
-          Utils.isFunction(cb) && await cb(_this.request, _this.response, next)
-        })();
-        this.router.init.call(this)
-      })
-      .listen(port, '0.0.0.0');
-    })
+        .createServer(async (request, response) => {
+          this.request = new Request(request);
+          this.response = new Response(response);
+          this.sessionStrict = new RedisStrict(this.get('session') || {}, this);
+          this.session = new Redis(this.get('session') || {}, this);
+          const _this = this;
+          (async function nextFunc() {
+            if (!_this.__QUEUE__.length) {
+              return;
+            }
+            const cb = _this.__QUEUE__.shift();
+            if (global.Utils.isFunction(cb)) {
+              await cb(_this.request, _this.response, nextFunc);
+            }
+          }());
+          this.router.init.call(this);
+        })
+        .listen(port, '0.0.0.0');
+    });
   }
 
-  use (cb) {
-    this.__QUEUE__.push(cb.bind(this))
+  use(cb) {
+    this.__QUEUE__.push(cb.bind(this));
   }
 }
-module.exports = M
+module.exports = M;

@@ -1,33 +1,53 @@
-function jwt () {
-  let { jwtScrect } = this.get('session')
-  this.header = Sec.base64encode({
-    'typ': 'JWT',
-    'alg': 'HS256'
-  })
-  this.payload = Sec.base64encode(payload)
-  this.signature = Sec.sha256(`${header}.${payload}`, jwtScrect)
-  this.ctx = {
-    header: {
-      'typ': 'JWT',
-      'alg': 'HS256'
-    },
-    payload
+class Jwt {
+  constructor(ctx, config = {}) {
+    this.config = config;
+    this.ctx = ctx;
   }
-  return `${this.header}.${this.payload}.${this.signature}`
-}
-jwt.decode = function (auth) {
-  if (/^Bearer /.test(auth)) {
-    auth = auth.slice(7).split('.').filter(String)
-    return auth.length && Sec.sha256(`${auth[0]}.${auth[1]}`, jwtScrect) === auth[2]
-  }
-  return false
-}
-jwt.verify = function (ctx) {
-  const { white } = ctx.get('jwt')
-  if (white && white.length && white.some(v => ctx.request.pathname.indexOf(v) > -1)) {
-    return true
-  }
-  return this.decode(ctx.request.headers('Authorization'))
-}
 
-module.exports = jwt
+  create(token = {}) {
+    const { screct, ttl } = this.config;
+    let header = { typ: 'JWT', alg: 'HS256' };
+    let payload = { token, expires: Date.now() + ttl * 1000 };
+
+    header = global.Sec.base64encode(header);
+    payload = global.Sec.base64encode(payload);
+    const signature = global.Sec.sha256(`${header}.${payload}`, screct);
+
+    this.body = {
+      header,
+      payload,
+      signature,
+    };
+
+    return `${header}.${payload}.${signature}`;
+  }
+
+  decode(auth) {
+    const { screct } = this.config;
+    if (/^Bearer /.test(auth)) {
+      auth = auth.slice(7).split('.').filter(String);
+      if (auth.length) {
+        const header = auth[0];
+        const payload = auth[1];
+        const signature = auth[2];
+        try {
+          const tmp = global.Sec.base64decode(payload);
+          if (tmp.expires < Date.now()) {
+            return '授权已过期';
+          }
+        } catch (e) {}
+        return auth.length && global.Sec.sha256(`${header}.${payload}`, screct) === signature;
+      }
+    }
+    return false;
+  }
+
+  verify() {
+    const { white } = this.config;
+    if (white && white.length && white.some((v) => this.ctx.request.pathname.indexOf(v) > -1)) {
+      return true;
+    }
+    return this.decode(this.ctx.request.headers('Authorization'));
+  }
+}
+module.exports = Jwt;

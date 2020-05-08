@@ -1,16 +1,16 @@
 class M {
   constructor(ctx) {
-    this.ctx = ctx
-    this.isStart = false
+    this.ctx = ctx;
+    this.isStart = false;
   }
 
-  set (key, val) {
-    this.ctx.response.setHeader(key, val)
+  set(key, val) {
+    this.ctx.response.setHeader(key, val);
   }
 
-  get () {
+  get() {
 
   }
 }
 
-module.exports = M
+module.exports = M;

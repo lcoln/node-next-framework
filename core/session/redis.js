@@ -1,67 +1,61 @@
-const Redis = require('ioredis')
-// 连接超时处理
-const defaultConf = {
-  sentinelRetryStrategy (times) {
-    times >= this.retryTime && process.exit()
-    return 1500;
-  },
-  retryTime: 5
-}
+'use strict';
+
+const Redis = require('ioredis');
+
 class M {
-  constructor({ sentinels, master, slave }, ctx) {
-    master = sentinels && sentinels.master ? sentinels.master : master
-    slave = sentinels && sentinels.slave ? sentinels.slave : (slave ? slave : master)
-    this.isStart = false
-    try {
-      // console.log(Object.assign(defaultConf, master))
-      if (sentinels) {
-        this.master = new Redis(Object.assign(defaultConf, master));
-        this.slave = new Redis(Object.assign(defaultConf, slave));
-      } else {
-        this.master = new Redis(master);
-        this.slave = new Redis(slave);
-      }
-      this.ctx = ctx
-    } catch (e) {console.log({redisErr: e})}
+  constructor(conf) {
+    const defaultConf = {
+      host: conf.host || '127.0.0.1',
+      port: conf.port || 6379,
+      db: conf.db || 0,
+      password: conf.password || '',
+    };
+
+    this.redis = new Redis(defaultConf);
+
+    this.ttl = conf.ttl || 60 * 60 * 24 * 15;
   }
 
-  start () {
-    if (this.isStart)
-      return
-    let opt = this.ctx.get('session') || {}
-    this.uuid = this.ctx.request.headers('user-agent') + '_' + Date.now()
-    if (opt.strict) {
-      this.uuid = `${this.uuid}_${this.ctx.request.ip()}`
-    }
-    this.uuid = Sec.md5(this.uuid)
-    this.master.expire(this.uuid, opt.ttl || 3600)
-    this.isStart = true
+  addCommonPopAndPush() {
+    Redis.Command.setReplyTransformer('get', (result) => {
+      if (!result) return null;
+    });
+    Redis.Command.setReplyTransformer('set', (result) => {
+      if (!result) return null;
+      return result;
+    });
   }
 
-  verify (uuid) {
-    this.uuid === uuid
-  }
-
-  async get (key) {
+  // 获取session字段值, 需要yeild指令
+  get(key) {
     return new Promise((yes, no) => {
-      this.slave.hgetall(this.uuid, (err, obj) => {
-        yes(obj)
-      })
-    })
+      this.redis.get(key, (err, obj) => {
+        if (err) { return no(err); }
+
+        return yes(obj);
+      });
+    });
   }
 
-  set (key, val) {
-    this.master.hset(this.uuid, key, val)
+  // 设置session字段值
+  set(key, val, ttl) {
+    ttl = !ttl ? this.ttl : ttl;
+    if (!val) { return null; }
+
+    if (Object.prototype.toString.call(val) === '[object Number]') { val += ''; }
+
+    if (Object.prototype.toString.call(val) !== '[object String]') { return null; }
+
+    this.redis.set(key, val);
+    this.redis.expire(key, ttl);
+
+    return true;
   }
 
-  unset (key) {
-    this.master.hdel(this.uuid, key)
-  }
-
-  clear () {
-    // console.log(this.uuid, this.master.del)
-    this.master.del(this.uuid)
+  // 删除key
+  delete(key) {
+    this.redis.del(key);
   }
 }
 
-module.exports = M
+module.exports = M;
