@@ -4,16 +4,18 @@ const Redis = require('ioredis');
 
 class M {
   constructor(conf) {
+    // console.log({ conf });
+    const { master = {} } = conf;
     const defaultConf = {
-      host: conf.host || '127.0.0.1',
-      port: conf.port || 6379,
-      db: conf.db || 0,
-      password: conf.password || '',
+      host: master.host || '127.0.0.1',
+      port: master.port || 6379,
+      db: master.db || 0,
+      password: master.password || '',
     };
 
     this.redis = new Redis(defaultConf);
 
-    this.ttl = conf.ttl || 60 * 60 * 24 * 15;
+    this.ttl = master.ttl || 60 * 60 * 24 * 15; // 15天缓存
   }
 
   addCommonPopAndPush() {
