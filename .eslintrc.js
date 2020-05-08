@@ -62,6 +62,7 @@ module.exports = {
     // "react/jsx-indent": 2,
     "no-underscore-dangle": 0,
     "class-methods-use-this": 0,     // class不需要强制this
-    "guard-for-in":"off"
+    "guard-for-in":"off",
+    "react/react-in-jsx-scope": "off", // 关闭检查React是否存在，Next.js不需要引用React
    },
 };
