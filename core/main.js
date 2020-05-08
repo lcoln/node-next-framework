@@ -80,15 +80,15 @@ class M {
           this.sessionStrict = new RedisStrict(this.get('session') || {}, this);
           this.session = new Redis(this.get('session') || {}, this);
           const _this = this;
-          (async function nextFunc() {
-            if (!_this.__QUEUE__.length) {
+          (async function nextFunc(i) {
+            if (!_this.__QUEUE__.length || _this.__QUEUE__.length <= i) {
               return;
             }
-            const cb = _this.__QUEUE__.shift();
+            let cb = _this.__QUEUE__[i]
             if (global.Utils.isFunction(cb)) {
-              await cb(_this.request, _this.response, nextFunc);
+              await cb(_this.request, _this.response, nextFunc.bind(null, i + 1));
             }
-          }());
+          }(0));
           this.router.init.call(this);
         })
         .listen(port, '0.0.0.0');
