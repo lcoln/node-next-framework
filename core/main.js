@@ -33,11 +33,11 @@ class M {
     this.template = global.Utils.bind(require('./renderer/template'));
     this.router = new Router();
     this.cookie = new Cookie(this);
-    this.mysql = Mysql;
     this.ssr = Next({
       dev,
       dir: rootDir,
     });
+    this.Mysql = Mysql;
   }
 
   set(obj) {
@@ -84,7 +84,7 @@ class M {
             if (!_this.__QUEUE__.length || _this.__QUEUE__.length <= i) {
               return;
             }
-            let cb = _this.__QUEUE__[i]
+            const cb = _this.__QUEUE__[i];
             if (global.Utils.isFunction(cb)) {
               await cb(_this.request, _this.response, nextFunc.bind(null, i + 1));
             }

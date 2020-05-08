@@ -50,6 +50,9 @@ class Controller {
     const { req, pathname, query } = this.request;
     const { res } = this.response;
     this.ctx.ssr.render(req, res, path || pathname, params || query);
+    // this.ctx.ssr.close();
+    // this.ctx.ssr.stopWatcher();
+    // this.ctx.ssr.hotReloader.stop();
   }
 
   assign(k, v) {

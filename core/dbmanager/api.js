@@ -1,5 +1,7 @@
 /* eslint-disable max-classes-per-file */
+const Mysql = require('mysql');
 
+const { escape } = Mysql;
 function join(v) {
   return v.filter((item) => item).join().trim();
 }
@@ -27,18 +29,18 @@ const parse = {
   }) {
     select = select || ['*'];
     if (!select || !this._table) { return this._error(); }
-    let base = `select ${select.join(',')} from ${this._table} `;
-    if (where) { base += `where ${where} `; }
-    if (group) { base += `group by ${group.join(',')} `; }
+    let base = `select ${escape(select.join(','))} from ${escape(this._table)} `;
+    if (where) { base += `where ${escape(where)} `; }
+    if (group) { base += `group by ${escape(group.join(','))} `; }
     if (order) {
       const key = Object.keys(order)[0];
       const val = order[key];
-      base += `order by ${key} ${Math.sign(val) > -1 ? 'asc' : 'desc'}`;
+      base += `order by ${escape(key)} ${Math.sign(val) > -1 ? 'asc' : 'desc'}`;
     }
     if (limit) {
       const { start, size } = limit;
       if (start && size) {
-        base += `limit ${start}, ${size} `;
+        base += `limit ${escape(start)}, ${escape(size)} `;
       } else {
         this._error('缺少参数');
       }
@@ -63,7 +65,7 @@ const parse = {
       return item;
     }, '').slice(0, -1);
     vals = `(${vals})`;
-    return keys.length && vals.length && `insert into ${this._table} ${keys} values ${vals}`;
+    return keys.length && vals.length && `insert into ${this._table} ${escape(keys)} values ${escape(vals)}`;
   },
   update({ data, where }) {
     if (!data || !Object.keys(data).length || !where) {
@@ -75,17 +77,17 @@ const parse = {
       sql += `${i}=${data[i]},`;
     }
     sql = sql.slice(0, -1);
-    return `update ${this._table} set ${sql} where ${where}`;
+    return `update ${this._table} set ${escape(sql)} where ${escape(where)}`;
   },
   delete({ where }) {
     if (!where) {
       return this._error('缺少参数');
     }
-    return `delete from ${this._table} where ${where}`;
+    return `delete from ${escape(this._table)} where ${escape(where)}`;
   },
   count({ select = '*', where }) {
     where = where ? `where ${where}` : '';
-    return `select count(${select}) from ${this._table} ${where}`;
+    return `select count(${escape(select)}) from ${this._table} ${where}`;
   },
   truncate() {
     return `truncate table ${this._table}`;
