@@ -16,8 +16,12 @@
 # 安装依赖
 npm install
 
-# 启动项目
-node projects/${project}/app.js
+# 本地调试
+1. pm2 start --name projectName projects/${project}/app.js --watch
+or
+2. node projects/${project}/app.js
+注: 推荐第一种方式, 需全局安装pm2 npm install pm2 -g
+3. open browser with localhost://${your project port}
 
 # 创建redis主从配置文件
 #!/bin/bash

@@ -33,6 +33,7 @@ class M {
     this.template = global.Utils.bind(require('./renderer/template'));
     this.router = new Router();
     this.cookie = new Cookie(this);
+    console.log({ dev });
     this.ssr = Next({
       dev,
       dir: rootDir,

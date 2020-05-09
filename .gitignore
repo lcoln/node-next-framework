@@ -7,4 +7,5 @@
 /app.js
 /public
 /projects/*
+watcher.js
 .DS_Store

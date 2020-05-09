@@ -1,8 +1,7 @@
 /* eslint-disable no-unused-vars */
 module.exports = (phase, { defaultConfig }) => ({
   distDir: '.next',
-  target: 'serverless',
-  pageExtensions: ['jsx', 'js', 'ts', 'tsx'],
+  target: process.env.NODE_ENV === 'devlopment' ? 'server' : 'serverless',
   // webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
   //   // Note: we provide webpack above so you should not `require` it
   //   // Perform customizations to webpack config
