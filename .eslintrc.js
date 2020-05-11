@@ -13,6 +13,7 @@ module.exports = {
     Sec: 'readonly',
     Controller: 'readonly',
     APP: 'readonly',
+    Utils: 'readonly',
   },
   parserOptions: {
     ecmaFeatures: {
