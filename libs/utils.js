@@ -11,11 +11,15 @@ function bind(ctx) {
 }
 
 function checkFields(para, fields) {
-  if (Object.empty(para)) { return 'params'; }
+  if (Object.empty(para)) {
+    return 'params';
+  }
 
   // eslint-disable-next-line no-unused-vars
   for (const it of fields) {
-    if (!para[it] && para[it] !== 0) { return it; }
+    if (!para[it] && para[it] !== 0) {
+      return it;
+    }
   }
   return true;
 }
@@ -60,7 +64,7 @@ function tohtml(str) {
   str = str.replace(/&lt;/g, '<');
   str = str.replace(/&gt;/g, '>');
   str = str.replace(/&quto;/g, '"');
-  str = str.replace(/&#39;/g, '\'');
+  str = str.replace(/&#39;/g, "'");
   str = str.replace(/&#96;/g, '`');
   str = str.replace(/&#x2F;/g, '/');
   return str;
@@ -91,7 +95,9 @@ function query(q) {
 }
 
 function suffix(str) {
-  if (!isString(str)) { return 'arguments is not string'; }
+  if (!isString(str)) {
+    return 'arguments is not string';
+  }
   return str.slice(str.lastIndexOf('.') + 1);
 }
 
@@ -138,6 +144,25 @@ function deepClone(obj) {
   throw new Error("Unable to copy obj! Its type isn't supported.");
 }
 
+function defSingleProp(obj, key, getter) {
+  let val;
+  Object.defineProperty(obj, key, {
+    get() {
+      if (!val) {
+        val = getter();
+      }
+      Object.defineProperty(obj, key, {
+        get() {
+          return val;
+        },
+        configurable: true,
+      });
+      return val;
+    },
+    configurable: true,
+  });
+}
+
 module.exports = function (ctx) {
   return {
     resolve,
@@ -151,8 +176,10 @@ module.exports = function (ctx) {
     bind: bind.bind(ctx),
     query,
     checkFields,
+    defSingleProp,
   };
 };
 
+module.exports.defSingleProp = defSingleProp;
 module.exports.isFunction = isFunction;
 module.exports.deepClone = deepClone;
