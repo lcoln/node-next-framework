@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+process.env.NODE_ENV = 'production';
 const path = require('path');
 const {
   isProd,
@@ -19,6 +20,6 @@ module.exports = (phase, config, a) => {
     generateBuildId: async () => 'v1',
     assetPrefix,
     distDir: '.next',
-    target: isProd ? 'server' : 'serverless',
+    target: isProd ? 'serverless' : 'server',
   };
 };
