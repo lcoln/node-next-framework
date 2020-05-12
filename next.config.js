@@ -7,7 +7,7 @@ const {
 } = require('./scripts/env');
 
 // const baseCdn = 'https://static.igeekee.cn/projs';
-const baseCdn = isProd ? 'https://static.igeekee.cn/projs' : 'http://imgtest.clickwifi.net/projs';
+const baseCdn = isProd ? 'http://imgtest.clickwifi.net/projs' : 'https://static.igeekee.cn/projs';
 
 const { version, name } = packageJson;
 
