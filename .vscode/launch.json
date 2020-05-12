@@ -24,7 +24,7 @@
         "<node_internals>/**"
       ],
       "cwd": "${workspaceFolder}/projects/service.igeekee.cn",
-      "program": "${workspaceFolder}/projects/service.igeekee.cn\\app.js",
+      "program": "${workspaceFolder}/projects/service.igeekee.cn/app.js",
       "args": [],
       "env": {
         "NODE_ENV": "development"

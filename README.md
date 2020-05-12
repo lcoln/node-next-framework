@@ -1,13 +1,13 @@
 # node-framework
-### 项目远程目录 /www.upgrade/node-next-framework
-### 本地文件夹名称恒为node-next-framework
-### 如果工程里无projects目录，请新建projects目录，运行项目则是需要将项目clone进projects目录
-#### 实例化后全局默认挂载以下参数
-    APP // 框架实例，可以通过APP.get(key)获取全局配置
-    Controller // 控制类, extends该控制类可获取session等实例
-    Utils // 全局工具函数库
-    Sec // 全局加密库
-> node项目框架
+1. 项目远程目录 /www.upgrade/node-next-framework
+2. 本地文件夹名称恒为node-next-framework
+3. 如果工程里无projects目录，请新建projects目录，运行项目则是需要将项目clone进projects目录
+4. 实例化后全局默认挂载以下参数
+> 1. APP // 框架实例，可以通过APP.get(key)获取全局配置
+> 2. Controller // 控制类, extends该控制类可获取session等实例
+> 3. Utils // 全局工具函数库
+> 4. Sec // 全局加密库
+# node项目框架
 
 ## Build Setup
 
@@ -51,3 +51,17 @@ mysqld
 连接不上时查看
 1. 数据库服务器3306端口是否放行
 2. 去除my.cnf bind-address=127.0.0.1
+```
+## 工程目录设计规范
+> node-next-framework // 公共框架层
+> 1. core                // 架构核心实现
+> 2. libs          // 公用工具函数库
+> 3. projects                // 业务工程目录
+>> projectName          // 工程目录名
+>>> 1. config               // 数据库redis等配置存储
+>>> 2. apps                // 接口路由(mvc)
+>>>> InterfaceName     // 接口目录
+>>>>> constroller      // 控制层, 主要负责数据接收, 业务处理, 调取model层进行数据获取, 最终返回数据请求处理结果
+>>>>> model            // 数据层, 主要负责转发接口，进行数据库操作, 最终返回数据给控制层
+>>> 3. src                  // 前端开发资源
+>>>> pages              // 前端路由目录

@@ -4,14 +4,13 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "pushCdn": "node scripts/pushCdn.js",
     "build": "next build",
-    "start": "next start projects/service.igeekee.cn -p 3334",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "linteng",
   "license": "ISC",
   "dependencies": {
-    "cross-spawn": "^7.0.2",
     "crypto.js": "^1.3.1",
     "formidable": "^1.2.1",
     "iofs": "^1.2.1",
@@ -22,9 +21,10 @@
     "mysqli": "^3.0.6",
     "next": "^9.3.6",
     "node-rsa": "^1.0.8",
-    "querystring": "^0.2.0",
+    "qiniu": "^7.3.1",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "superagent": "^5.2.2"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
