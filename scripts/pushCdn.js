@@ -9,14 +9,14 @@
 
   const filenames = fs.ls(staticPath, true);
   // filenames = filenames.slice(20, 25);
-  // console.log({ filenames });
+  // console.log({ filenames, staticPath, project });
   if (filenames.length) {
     for (let i = 0; i < filenames.length; i++) {
       const index = filenames[i].indexOf('.next') + 6;
       const filename = filenames[i].slice(index);
       if (!fs.isdir(filenames[i])) {
         const realFilename = `projs/${name}/${version}/_next/${filename}`;
-        // console.log(realFilename);
+        console.log(realFilename);
         const matchList = realFilename.match(excludeList);
         if (matchList && matchList.length) {
           continue;
@@ -29,14 +29,14 @@
          * @type {String}
          */
         // eslint-disable-next-line no-await-in-loop
-        const { url } = await uploadqiniu(filenames[i], {
-          realFilename,
-          // prefix: 'chuanghu',
-          suffix: '',
-          // useFileName: true,
-          useDate: true,
-        });
-        console.log(url);
+        // const { url } = await uploadqiniu(filenames[i], {
+        //   realFilename,
+        //   // prefix: 'chuanghu',
+        //   suffix: '',
+        //   // useFileName: true,
+        //   useDate: true,
+        // });
+        // console.log(url);
       }
       // https://static.igeekee.cn/projs/service/1.0.0/_next/static/runtime/main-b837e1882c9b54a44160.js
     }

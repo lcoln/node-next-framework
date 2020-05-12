@@ -14,6 +14,7 @@ const { version, name } = packageJson;
 module.exports = (phase, config, a) => {
   console.log();
   const assetPrefix = isProd ? `${baseCdn}/${name}/${version}` : '';
+  console.log({ assetPrefix, isProd });
   return {
     generateBuildId: async () => 'v1',
     assetPrefix,
