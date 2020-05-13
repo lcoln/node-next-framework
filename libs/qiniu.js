@@ -28,8 +28,7 @@ const zone = {
   imgtest: 'Zone_z2',
   igeekee: 'Zone_z0',
 };
-// const bucket = 'igeekee';
-const bucket = 'imgtest';
+const bucket = process.env.NODE_ENV === 'production' ? 'igeekee' : 'imgtest';
 const mac = new qiniu.auth.digest.Mac(ACCESS_KEY, SECRET_KEY);
 const config = new qiniu.conf.Config();
 // config.zone = qiniu.zone.Zone_z0;
