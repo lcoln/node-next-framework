@@ -16,7 +16,7 @@
       const filename = filenames[i].slice(index);
       if (!fs.isdir(filenames[i])) {
         const realFilename = `projs/${name}/${version}/_next/${filename}`;
-        console.log(realFilename);
+        // console.log(realFilename);
         const matchList = realFilename.match(excludeList);
         if (matchList && matchList.length) {
           continue;
@@ -36,7 +36,7 @@
           // useFileName: true,
           useDate: true,
         });
-        console.log(url);
+        console.log(`upload ${url} done !`);
       }
       // https://static.igeekee.cn/projs/service/1.0.0/_next/static/runtime/main-b837e1882c9b54a44160.js
     }
