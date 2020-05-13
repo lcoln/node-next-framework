@@ -74,7 +74,7 @@ function qiniuStat(filename) {
     bucketManager.stat(bucket, filename, (err, respBody, respInfo) => {
       if (err) {
         resolve(false);
-      } else if (respInfo.statusCode === 200) {
+      } else if (respInfo && respInfo.statusCode === 200) {
         resolve(true);
       } else {
         resolve(false);
@@ -185,7 +185,7 @@ async function uploadqiniu(url, uploadConfig = {
         // console.log({respErr})
         yes({ code: 500 });
       }
-      if (respInfo.statusCode === 614) {
+      if (respInfo && respInfo.statusCode === 614) {
         bucketManager.delete(options.scope, filename, async (err, respBody, respInfo) => {
           if (err) {
             console.error(`Got error: ${err.message}`);
@@ -195,7 +195,7 @@ async function uploadqiniu(url, uploadConfig = {
           }
         });
       }
-      if (respInfo && respInfo.status == 200) {
+      if (respInfo && respInfo.status === 200) {
         // console.log({respInfo})
         const sub = format !== 'js' ? suffix : '';
         yes({ code: respInfo.status, url: host[bucket] + filename + sub, sign: key });

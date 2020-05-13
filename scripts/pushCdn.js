@@ -29,14 +29,14 @@
          * @type {String}
          */
         // eslint-disable-next-line no-await-in-loop
-        // const { url } = await uploadqiniu(filenames[i], {
-        //   realFilename,
-        //   // prefix: 'chuanghu',
-        //   suffix: '',
-        //   // useFileName: true,
-        //   useDate: true,
-        // });
-        // console.log(url);
+        const { url } = await uploadqiniu(filenames[i], {
+          realFilename,
+          // prefix: 'chuanghu',
+          suffix: '',
+          // useFileName: true,
+          useDate: true,
+        });
+        console.log(url);
       }
       // https://static.igeekee.cn/projs/service/1.0.0/_next/static/runtime/main-b837e1882c9b54a44160.js
     }
