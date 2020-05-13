@@ -17,7 +17,7 @@ module.exports = (phase, config, a) => {
   const assetPrefix = `${baseCdn}/${project}/${version}`;
   // console.log({ assetPrefix, isProd });
   return {
-    generateBuildId: async () => 'v1',
+    // generateBuildId: async () => 'v1',
     assetPrefix,
     distDir: '.next',
     target: isProd ? 'serverless' : 'server',
