@@ -15,7 +15,7 @@
       const index = filenames[i].indexOf('.next') + 6;
       const filename = filenames[i].slice(index);
       if (!fs.isdir(filenames[i])) {
-        const realFilename = `projs/${name}/${version}/_next/${filename}`;
+        const realFilename = `projs/${project}/${version}/_next/${filename}`;
         // console.log(realFilename);
         const matchList = realFilename.match(excludeList);
         if (matchList && matchList.length) {
