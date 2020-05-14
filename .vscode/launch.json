@@ -19,12 +19,12 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "debug service.igeekee.cn",
+      "name": "debug serve.isjike.com",
       "skipFiles": [
         "<node_internals>/**"
       ],
-      "cwd": "${workspaceFolder}/projects/service.igeekee.cn",
-      "program": "${workspaceFolder}/projects/service.igeekee.cn/app.js",
+      "cwd": "${workspaceFolder}/projects/serve.isjike.com",
+      "program": "${workspaceFolder}/projects/serve.isjike.com/app.js",
       "args": [],
       "env": {
         "NODE_ENV": "development"
