@@ -163,6 +163,22 @@ function defSingleProp(obj, key, getter) {
   });
 }
 
+/**
+ * 将驼峰转换成-
+ * @param {String} str  // 需要转换的字符串
+ * @param {String} key  // 通过该字符串连接str
+ */
+function connectStrBy(str, key = '-') {
+  if (!str) {
+    return '';
+  }
+  return str.replace(/([A-Z])/g, (...rest) => {
+    if (rest[0]) {
+      return `${key}${rest[0].toLocaleLowerCase()}`;
+    }
+  });
+}
+
 module.exports = function (ctx) {
   return {
     resolve,
@@ -176,6 +192,7 @@ module.exports = function (ctx) {
     bind: bind.bind(ctx),
     query,
     checkFields,
+    connectStrBy,
     defSingleProp,
   };
 };
