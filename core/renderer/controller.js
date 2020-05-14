@@ -46,9 +46,19 @@ class Controller {
     return this.template.render(content)
   } */
 
-  render(path, params) {
+  /**
+   * next.ssr
+   * // 对应src/pages/pageName
+   * @param {String} path
+   * // 通过对应页面getInitialProps取到,params.page对应src/pages/pageName/[page]/${params.page}
+   * @param {Object} params
+   */
+  render(path, params = {}) {
     const { req, pathname, query } = this.request;
     const { res } = this.response;
+    path = path.split('/').map((v) => Utils.connectStrBy(v)).join('/');
+    // console.log({ path, params });
+    path = path && path.slice(-1) === '/' ? path.slice(0, -1) : path;
     this.ctx.ssr.render(req, res, path || pathname, params || query);
     // this.ctx.ssr.close();
     // this.ctx.ssr.stopWatcher();

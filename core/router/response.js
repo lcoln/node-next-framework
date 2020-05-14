@@ -14,7 +14,7 @@ class M {
     return this.res.getHeader(key);
   }
 
-  send(
+  sendwithRestful(
     code = 200,
     msg,
     data,
@@ -24,6 +24,20 @@ class M {
       return;
     }
     this.res.writeHead(code, type);
+    const out = { code, msg, data };
+    this.end(JSON.stringify(out));
+  }
+
+  send(
+    code = 200,
+    msg,
+    data,
+    type = { 'Content-Type': 'application/json; charset=utf-8' },
+  ) {
+    if (this.lock) {
+      return;
+    }
+    this.res.writeHead(200, type);
     const out = { code, msg, data };
     this.end(JSON.stringify(out));
   }
