@@ -33,7 +33,6 @@ class M {
     this.template = global.Utils.bind(require('./renderer/template'));
     this.router = new Router();
     this.cookie = new Cookie(this);
-    console.log({ dev });
     this.ssr = Next({
       dev,
       dir: rootDir,
@@ -44,16 +43,8 @@ class M {
   set(obj) {
     // eslint-disable-next-line no-unused-vars
     for (const i in obj) {
-      if (!global.Utils.isArray(obj[i])) {
-        if (!this.__CONFIG__[i]) {
-          this.__CONFIG__[i] = obj[i];
-        } else {
-          try {
-            Object.assign(this.__CONFIG__, obj);
-          } catch (err) {
-            console.log(err);
-          }
-        }
+      if (!global.Utils.isArray(obj[i]) && !global.Utils.isObject(obj[i])) {
+        this.__CONFIG__[i] = obj[i];
       } else {
         this.__CONFIG__[i] = obj[i];
       }
@@ -73,13 +64,15 @@ class M {
   }
 
   start(port) {
+    // console.log(this.get('session'));
+    this.sessionStrict = new RedisStrict(this.get('session') || {}, this);
+    this.session = new Redis(this.get('session') || {}, this);
+
     this.ssr.prepare().then(() => {
       Http
         .createServer(async (request, response) => {
           this.request = new Request(request);
           this.response = new Response(response);
-          this.sessionStrict = new RedisStrict(this.get('session') || {}, this);
-          this.session = new Redis(this.get('session') || {}, this);
           const _this = this;
           (async function nextFunc(i) {
             if (!_this.__QUEUE__.length || _this.__QUEUE__.length <= i) {
