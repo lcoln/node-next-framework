@@ -185,6 +185,7 @@ module.exports = function (ctx) {
     isArray,
     isFunction,
     isObject,
+    isString,
     sleep,
     tocode,
     tohtml,
