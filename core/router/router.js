@@ -1,5 +1,11 @@
 class M {
   async init() {
+    const ssrRender = () => {
+      const { req, pathname, query } = this.request;
+      const { res } = this.response;
+      this.ssr.render(req, res, pathname, query);
+    };
+
     const { APPS, ISDEBUG } = this.get();
     try {
       let params = this.request.pathname.split('/').filter((v) => v) || [];
@@ -14,14 +20,12 @@ class M {
 
       // ssr资源
       if (/(_next|favicon.ico)/.test(act)) {
-        const { req, pathname, query } = this.request;
-        const { res } = this.response;
-        this.ssr.render(req, res, pathname, query);
+        ssrRender();
       } else {
         // 否则走接口
         let App = require(global.Utils.resolve(APPS, act, 'controller'));
         App = new App(this.request, this.response, this);
-        // console.log({App, func})
+        // console.log({ App, func });
         if (App[func]) {
           // eslint-disable-next-line prefer-spread
           await App[func].apply(App, params);
@@ -30,9 +34,13 @@ class M {
         }
       }
     } catch (e) {
-      const msg = ISDEBUG ? e.stack : '页面出错';
-      console.log(e, { stack: e.stack });
-      this.response.error('404', msg, true);
+      try {
+        ssrRender();
+      } catch (err) {
+        const msg = ISDEBUG ? e.stack : '页面出错';
+        console.log(e, { stack: e.stack });
+        this.response.error('404', msg, true);
+      }
     }
   }
 }

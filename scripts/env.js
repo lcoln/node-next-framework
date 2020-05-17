@@ -1,9 +1,12 @@
 const path = require('path');
 
-const isProd = process.env.NODE_ENV === 'production';
-const argv = process.argv.filter((v) => v.indexOf('projects') > -1);
-const project = argv && argv[0] && argv[0].slice(argv[0].lastIndexOf('/') + 1);
-// console.log(process.argv, argv, project, __dirname);
+const projectsDir = 'projects';
+
+const argv = process.argv.filter((v) => v.indexOf('projects') > -1)[0];
+// console.log({ argv }, process.argv);
+const index = argv ? argv.indexOf(projectsDir) + projectsDir.length + 1 : 0;
+const project = argv.slice(index).split('/')[0];
+// console.log({ ddd: __dirname }, project);
 
 let packageJson = {};
 try {
@@ -11,8 +14,8 @@ try {
 } catch (e) {}
 
 const ENV = {
-  cwd: process.cwd(),
-  isProd,
+  cwd: path.resolve(__dirname, '..'),
+  isProd: process.env.NODE_ENV === 'production',
   project,
   packageJson,
 };
