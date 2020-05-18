@@ -31,37 +31,52 @@ module.exports = (phase) => {
   const nextConfig = {
     // cssModules: true,
     // generateBuildId: async () => 'v1',
-    lessLoaderOptions: {
+    /* lessLoaderOptions: {
       cssModules: true,
       javascriptEnabled: true,
-    },
-    antdLessLoaderOptions: {
+    }, */
+    /* antdLessLoaderOptions: {
       javascriptEnabled: true,
-    },
-    webpack: (config) => {
+    }, */
+    webpack: (config, options) => {
       // Add aliases
       config.resolve.alias = {
         ...(config.resolve.alias || {}),
         ...aliases,
       };
-      // console.log({ aliases });
-      /* config.module.rules.push(
-        {
-          test: /.css/,
-          use: 'css-loader',
-        },
-      ); */
+      console.log(config.plugins);
+      /* config.module.rules.push({
+        test: /\.less/,
+        use: [
+          options.defaultLoaders.babel,
+          {
+            loader: 'style-loader',
+            // options: pluginOptions.options,
+          },
+          {
+            loader: 'less-loader',
+          },
+        ],
+      }); */
+      // console.log(options);
+      // console.log(config.module.rules);
 
       return config;
     },
-    experimental: {
-      css: true,
-    },
+    // experimental: {
+    //   css: true,
+    // },
     assetPrefix,
     distDir: '.next',
     target: isProd ? 'serverless' : 'server',
   };
   // console.log({ aliases });
+  /* return withPlugins([
+    [withLess],
+    [withCss],
+    [withTM],
+  ], nextConfig); */
+  // return withTM([withLess, withCss], nextConfig);
   return withTM(withCss(withLess(nextConfig)));
   // return withLess(nextConfig);
 };
