@@ -4,7 +4,9 @@ const path = require('path');
 const withLess = require('@zeit/next-less');
 const withCss = require('@zeit/next-css');
 // const baseCdn = 'https://static.igeekee.cn/projs';
+// eslint-disable-next-line import/no-extraneous-dependencies
 const withTM = require('next-transpile-modules')(['antd']);
+
 const {
   cwd,
   isProd,
@@ -44,23 +46,20 @@ module.exports = (phase) => {
         ...(config.resolve.alias || {}),
         ...aliases,
       };
-      console.log(config.plugins);
-      /* config.module.rules.push({
-        test: /\.less/,
-        use: [
-          options.defaultLoaders.babel,
-          {
-            loader: 'style-loader',
-            // options: pluginOptions.options,
-          },
-          {
-            loader: 'less-loader',
-          },
-        ],
-      }); */
-      // console.log(options);
-      // console.log(config.module.rules);
 
+      // console.log(config.module.rules[4]);
+      // config.module.rules[4].use = [
+      //   // {
+      //   //   loader: MiniCssExtractPlugin.loader,
+      //   // },
+      //   'extracted-loader',
+      //   // '/Users/linteng/www/www.upgrade/node-next-framework/node_modules/mini-css-extract-plugin/dist/loader.js',
+      //   // 'style-loader',
+      //   'isomorphic-style-loader',
+      //   'css-loader',
+      //   'postcss-loader',
+      //   'less-loader',
+      // ];
       return config;
     },
     // experimental: {
