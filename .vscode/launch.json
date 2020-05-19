@@ -25,7 +25,7 @@
       ],
       "cwd": "${workspaceFolder}/projects/serve.isjike.com",
       "program": "${workspaceFolder}/projects/serve.isjike.com/app.js",
-      "args": [],
+      "args": ["projects/serve.isjike.com"],
       "env": {
         "NODE_ENV": "development"
       },

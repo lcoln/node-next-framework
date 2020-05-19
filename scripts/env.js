@@ -5,7 +5,7 @@ const projectsDir = 'projects';
 const argv = process.argv.filter((v) => v.indexOf('projects') > -1)[0];
 // console.log({ argv }, process.argv);
 const index = argv ? argv.indexOf(projectsDir) + projectsDir.length + 1 : 0;
-const project = argv.slice(index).split('/')[0];
+const project = argv.slice(index).split(/[\\/]/)[0];
 // console.log({ ddd: __dirname }, project);
 
 let packageJson = {};

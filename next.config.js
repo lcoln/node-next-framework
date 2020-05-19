@@ -8,10 +8,7 @@ const withCss = require('@zeit/next-css');
 const withTM = require('next-transpile-modules')(['antd']);
 
 const {
-  cwd,
-  isProd,
-  project,
-  packageJson,
+  cwd, isProd, project, packageJson,
 } = require('./scripts/env');
 
 const baseCdn = isProd ? 'https://static.igeekee.cn/projs' : '';
@@ -60,6 +57,48 @@ module.exports = (phase) => {
       //   'postcss-loader',
       //   'less-loader',
       // ];
+      const entry = config.entry;
+      config.entry = async function () {
+        const res = await entry();
+        return res;
+      };
+      if (process.env.NODE_ENV === 'production') {
+        if (config.optimization.splitChunks) {
+          // delete config.optimization.splitChunks.cacheGroups.styles;
+          // config.optimization.splitChunks.cacheGroups.styles.minSize = 0;
+          // config.optimization.splitChunks.cacheGroups.styles.maxSize = 10000;
+          config.optimization.splitChunks.cacheGroups.styles.chunks = 'async';
+        }
+      } else {
+        config.module.rules.push({
+          test: /\.(css|less)$/,
+          resourceQuery: /useable/,
+          use: [{
+            loader: 'style-loader/useable',
+          }, {
+            loader: require.resolve('css-loader'),
+            options: {
+              importLoaders: 1,
+            },
+          }, 'less-loader'],
+        });
+
+        config.module.rules.push({
+          test: /\.(css|less)$/,
+          use: [{
+            loader: require.resolve(
+              path.resolve(__dirname, './scripts/styleLoader.js'),
+            ),
+          }, {
+            loader: 'style-loader/useable',
+          }, {
+            loader: require.resolve('css-loader'),
+            options: {
+              importLoaders: 1,
+            },
+          }, 'less-loader'],
+        });
+      }
       return config;
     },
     // experimental: {
@@ -76,6 +115,15 @@ module.exports = (phase) => {
     [withTM],
   ], nextConfig); */
   // return withTM([withLess, withCss], nextConfig);
-  return withTM(withCss(withLess(nextConfig)));
   // return withLess(nextConfig);
+  // return withTM(withLess(nextConfig));
+  if (process.env.NODE_ENV === 'production') {
+    return withTM(withCss(withLess(nextConfig)));
+  }
+  return withTM(nextConfig);
+
+  // return withPlugins([withLess, withCss, withTM], nextConfig);
+  // return withTM(nextConfig);
+  // return withLess(nextConfig);
+  // return nextConfig;
 };
