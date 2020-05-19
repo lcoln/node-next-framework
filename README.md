@@ -17,7 +17,7 @@
 npm install
 
 # 本地调试
-1. pm2 start --name projectName projects/${project}/app.js --watch
+1. pm2 start projects/${project}/app.js --watch
 or
 2. node projects/${project}/app.js
 注: 推荐第一种方式, 需全局安装pm2 npm install pm2 -g
@@ -65,3 +65,5 @@ mysqld
 >>>>> model            // 数据层, 主要负责转发接口，进行数据库操作, 最终返回数据给控制层
 >>> 3. src                  // 前端开发资源
 >>>> pages              // 前端路由目录
+
+注: 需在.git/info/exclude 添加一行 .next, 用于忽略本地.next目录提交
