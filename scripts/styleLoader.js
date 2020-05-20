@@ -1,4 +1,6 @@
 module.exports = function (source) {
-  source = `if (process.browser) {\n${source}\nexports.use();}`;
-  return source;
+  if (this.target === 'web') {
+    return `${source}\nexports.use();`;
+  }
+  return ';';
 };

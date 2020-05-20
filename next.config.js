@@ -62,14 +62,13 @@ module.exports = (phase) => {
         const res = await entry();
         return res;
       };
-      if (process.env.NODE_ENV === 'production') {
-        if (config.optimization.splitChunks) {
-          // delete config.optimization.splitChunks.cacheGroups.styles;
-          // config.optimization.splitChunks.cacheGroups.styles.minSize = 0;
-          // config.optimization.splitChunks.cacheGroups.styles.maxSize = 10000;
-          config.optimization.splitChunks.cacheGroups.styles.chunks = 'async';
-        }
-      } else {
+      if (config.target === 'web') {
+        // if (config.optimization.splitChunks) {
+        //   // delete config.optimization.splitChunks.cacheGroups.styles;
+        //   // config.optimization.splitChunks.cacheGroups.styles.minSize = 0;
+        //   // config.optimization.splitChunks.cacheGroups.styles.maxSize = 10000;
+        //   config.optimization.splitChunks.cacheGroups.styles.chunks = 'async';
+        // }
         config.module.rules.push({
           test: /\.(css|less)$/,
           resourceQuery: /useable/,
@@ -98,6 +97,28 @@ module.exports = (phase) => {
             },
           }, 'less-loader'],
         });
+      } else {
+        config.module.rules.push({
+          test: /\.(css|less)$/,
+          resourceQuery: /useable/,
+          use: [{
+            loader: 'style-loader/useable',
+          }, {
+            loader: require.resolve('css-loader'),
+            options: {
+              importLoaders: 1,
+            },
+          }, 'less-loader'],
+        });
+
+        config.module.rules.push({
+          test: /\.(css|less)$/,
+          use: [{
+            loader: require.resolve(
+              path.resolve(__dirname, './scripts/styleLoader.js'),
+            ),
+          }],
+        });
       }
       return config;
     },
@@ -117,9 +138,9 @@ module.exports = (phase) => {
   // return withTM([withLess, withCss], nextConfig);
   // return withLess(nextConfig);
   // return withTM(withLess(nextConfig));
-  if (process.env.NODE_ENV === 'production') {
-    return withTM(withCss(withLess(nextConfig)));
-  }
+  // if (process.env.NODE_ENV === 'production') {
+  //   return withTM(withCss(withLess(nextConfig)));
+  // }
   return withTM(nextConfig);
 
   // return withPlugins([withLess, withCss, withTM], nextConfig);
