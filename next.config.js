@@ -85,11 +85,7 @@ module.exports = (phase) => {
         config.module.rules.push({
           test: /\.(css|less)$/,
           use: [{
-            loader: require.resolve(
-              path.resolve(__dirname, './scripts/styleLoader.js'),
-            ),
-          }, {
-            loader: 'style-loader/useable',
+            loader: 'style-loader',
           }, {
             loader: require.resolve('css-loader'),
             options: {
@@ -102,20 +98,17 @@ module.exports = (phase) => {
           test: /\.(css|less)$/,
           resourceQuery: /useable/,
           use: [{
-            loader: 'style-loader/useable',
-          }, {
-            loader: require.resolve('css-loader'),
-            options: {
-              importLoaders: 1,
-            },
-          }, 'less-loader'],
+            loader: require.resolve(
+              path.resolve(__dirname, './scripts/ssrUseableLoader.js'),
+            ),
+          }],
         });
 
         config.module.rules.push({
           test: /\.(css|less)$/,
           use: [{
             loader: require.resolve(
-              path.resolve(__dirname, './scripts/styleLoader.js'),
+              path.resolve(__dirname, './scripts/ssrStyleLoader.js'),
             ),
           }],
         });
