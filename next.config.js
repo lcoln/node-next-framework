@@ -119,6 +119,9 @@ module.exports = (phase) => {
           loader: require.resolve(
             path.resolve(__dirname, './scripts/ssrLayoutLoader.js'),
           ),
+          options: {
+            ssr: packageJson.config.ssr,
+          },
         }],
       });
       return config;

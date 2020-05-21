@@ -118,6 +118,9 @@ module.exports = function () {};
 module.exports.pitch = function (request) {
   this.cacheable(true);
   this.sourceMap = false;
+  if (this.target === 'node' && !this.query.ssr) {
+    return 'export default {notSsr:true}';
+  }
   const callback = this.async();
   (async () => {
     const result = {
