@@ -113,6 +113,14 @@ module.exports = (phase) => {
           }],
         });
       }
+      config.module.rules.push({
+        resourceQuery: /ssrLayout/,
+        use: [{
+          loader: require.resolve(
+            path.resolve(__dirname, './scripts/ssrLayoutLoader.js'),
+          ),
+        }],
+      });
       return config;
     },
     // experimental: {
