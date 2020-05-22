@@ -1,8 +1,10 @@
 /* eslint-disable no-unused-vars */
 // process.env.NODE_ENV = 'production';
+const webpack = require('webpack');
 const path = require('path');
 const withLess = require('@zeit/next-less');
 const withCss = require('@zeit/next-css');
+const withImages = require('next-images');
 // const baseCdn = 'https://static.igeekee.cn/projs';
 // eslint-disable-next-line import/no-extraneous-dependencies
 const withTM = require('next-transpile-modules')(['antd']);
@@ -22,6 +24,7 @@ module.exports = (phase) => {
   const aliases = {
     '@': path.join(cwd, 'projects', project, 'src'),
     pages: path.join(cwd, 'projects', project, 'src', 'pages'),
+    '@commonLibs': path.join(cwd, 'projects', project, 'src', 'lib-provider'),
   };
   /* if (typeof require !== 'undefined') {
     require.extensions['.css'] = (file) => {};
@@ -124,6 +127,11 @@ module.exports = (phase) => {
           },
         }],
       });
+      config.plugins.push(
+        new webpack.DefinePlugin({
+          'process.ssr': `"${packageJson.config.ssr}"`,
+        }),
+      );
       return config;
     },
     // experimental: {
@@ -145,7 +153,7 @@ module.exports = (phase) => {
   // if (process.env.NODE_ENV === 'production') {
   //   return withTM(withCss(withLess(nextConfig)));
   // }
-  return withTM(nextConfig);
+  return withImages(withTM(nextConfig));
 
   // return withPlugins([withLess, withCss, withTM], nextConfig);
   // return withTM(nextConfig);
