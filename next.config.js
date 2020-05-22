@@ -21,10 +21,11 @@ module.exports = (phase) => {
   const assetPrefix = '';
   // const assetPrefix = isProd ? `${baseCdn}/${project}/${version}` : '';
   // console.log(__dirname);
+  const projectsDir = path.join(cwd, 'projects');
   const aliases = {
     '@': path.join(cwd, 'projects', project, 'src'),
     pages: path.join(cwd, 'projects', project, 'src', 'pages'),
-    '@commonLibs': path.join(cwd, 'projects', project, 'src', 'lib-provider'),
+    projects: projectsDir,
   };
   /* if (typeof require !== 'undefined') {
     require.extensions['.css'] = (file) => {};
@@ -65,6 +66,7 @@ module.exports = (phase) => {
         const res = await entry();
         return res;
       };
+      config.module.rules[0].include.push(projectsDir);
       if (config.target === 'web') {
         // if (config.optimization.splitChunks) {
         //   // delete config.optimization.splitChunks.cacheGroups.styles;
@@ -72,6 +74,7 @@ module.exports = (phase) => {
         //   // config.optimization.splitChunks.cacheGroups.styles.maxSize = 10000;
         //   config.optimization.splitChunks.cacheGroups.styles.chunks = 'async';
         // }
+
         config.module.rules.push({
           test: /\.(css|less)$/,
           resourceQuery: /useable/,
