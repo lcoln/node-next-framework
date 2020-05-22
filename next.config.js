@@ -119,6 +119,7 @@ module.exports = (phase) => {
           }],
         });
       }
+      const ssr = packageJson && packageJson.config && packageJson.config.ssr;
       config.module.rules.push({
         resourceQuery: /ssrLayout/,
         use: [{
@@ -126,13 +127,13 @@ module.exports = (phase) => {
             path.resolve(__dirname, './scripts/ssrLayoutLoader.js'),
           ),
           options: {
-            ssr: packageJson.config.ssr,
+            ssr,
           },
         }],
       });
       config.plugins.push(
         new webpack.DefinePlugin({
-          'process.ssr': `"${packageJson.config.ssr}"`,
+          'process.ssr': `"${ssr}"`,
         }),
       );
       return config;

@@ -34,52 +34,58 @@ if (!Date.prototype.getWeek) {
 }
 
 if (!Date.prototype.format) {
+  const WEEK = ['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
+
+  const REG = {
+    Y: (dt) => dt.getFullYear(),
+    y: (dt) => dt.getYear(),
+    m: (dt) => {
+      const month = dt.getMonth() + 1;
+      return month < 10 ? `0${month}` : month;
+    },
+    n: (dt) => dt.getMonth() + 1,
+    d: (dt) => {
+      const date = dt.getDate();
+      return date < 10 ? `0${date}` : date;
+    },
+    j: (dt) => dt.getDate(),
+    H: (dt) => {
+      const hours = dt.getHours();
+      return hours < 10 ? `0${hours}` : hours;
+    },
+    h: (dt) => {
+      const hours = dt.getHours();
+      const g = hours > 12 ? hours - 12 : hours;
+      return g < 10 ? `0${g}` : g;
+    },
+    G: (dt) => dt.getHours(),
+    g: (dt) => {
+      const hours = dt.getHours();
+      return hours > 12 ? hours - 12 : hours;
+    },
+    i: (dt) => {
+      const minutes = dt.getMinutes();
+      return minutes < 10 ? `0${minutes}` : minutes;
+    },
+    s: (dt) => {
+      const seconds = dt.getSeconds();
+      return seconds < 10 ? `0${seconds}` : seconds;
+    },
+    W: (dt) => dt.getFullWeek(),
+    w: (dt) => WEEK[dt.getWeek()],
+    D: (dt) => dt.getDay(),
+  };
+
   Object.defineProperty(Date.prototype, 'format', {
+    // eslint-disable-next-line no-unused-vars
     value(str = 'Y-m-d H:i:s', time = this) {
       if (/^\d+$/.test(str)) {
-        time = str;
+        time = new Date(str);
         str = 'Y-m-d H:i:s';
       }
-      const now = new Date(time);
-
-      const week = ['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
-
-      const dt = {
-        fullyear: now.getFullYear(),
-        year: now.getYear(),
-        fullweek: now.getFullWeek(),
-        month: now.getMonth() + 1,
-        week: week[now.getWeek()],
-        date: now.getDate(),
-        day: now.getDay(),
-        hours: now.getHours(),
-        minutes: now.getMinutes(),
-        seconds: now.getSeconds(),
-      };
-      let reg = null;
-
-      dt.g = dt.hours > 12 ? dt.hours - 12 : dt.hours;
-
-      reg = {
-        Y: dt.fullyear,
-        y: dt.year,
-        m: dt.month < 10 ? `0${dt.month}` : dt.month,
-        n: dt.month,
-        d: dt.date < 10 ? `0${dt.date}` : dt.date,
-        j: dt.date,
-        H: dt.hours < 10 ? `0${dt.hours}` : dt.hours,
-        h: dt.g < 10 ? `0${dt.g}` : dt.g,
-        G: dt.hours,
-        g: dt.g,
-        i: dt.minutes < 10 ? `0${dt.minutes}` : dt.minutes,
-        s: dt.seconds < 10 ? `0${dt.seconds}` : dt.seconds,
-        W: dt.fullweek,
-        w: dt.week,
-        D: dt.day,
-      };
       let i;
-      for (i in reg) {
-        str = str.replace(new RegExp(i, 'g'), reg[i]);
+      for (i in REG) {
+        str = str.replace(new RegExp(i, 'g'), REG[i](time));
       }
       return str;
     },
