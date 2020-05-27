@@ -10,6 +10,7 @@ const RedisStrict = require('./session/redisStrict');
 const Redis = require('./session/redis');
 const Cookie = require('./session/cookie');
 const Mysql = require('./dbmanager/mysql');
+const Jwt = require('./session/jwt');
 
 const utils = require('../libs/utils');
 const config = require('./configure');
@@ -29,10 +30,10 @@ class M {
   }
 
   _init(rootDir) {
-    this.jwt = global.Utils.bind(require('./session/jwt'));
     this.template = global.Utils.bind(require('./renderer/template'));
     this.router = new Router();
     this.cookie = new Cookie(this);
+
     this.ssr = Next({
       dev,
       dir: rootDir,
@@ -67,6 +68,7 @@ class M {
     // console.log(this.get('session'));
     this.sessionStrict = new RedisStrict(this.get('session') || {}, this);
     this.session = new Redis(this.get('session') || {}, this);
+    this.jwt = new Jwt(this, this.get('JWT'));
 
     this.ssr.prepare().then(() => {
       Http
@@ -80,7 +82,9 @@ class M {
             }
             const cb = _this.__QUEUE__[i];
             if (global.Utils.isFunction(cb)) {
-              await cb(_this.request, _this.response, nextFunc.bind(null, i + 1));
+              if (!/(_next|favicon.ico|static\/chunks)/.test(_this.request.pathname)) {
+                await cb(_this.request, _this.response, nextFunc.bind(null, i + 1));
+              }
             }
           }(0));
           this.router.init.call(this);

@@ -69,7 +69,8 @@ class M {
     });
   }
 
-  headers(key) {
+  headers(key = '') {
+    key = key.toLocaleLowerCase();
     return key ? (key in this.req.headers ? this.req.headers[key] : '') : this.req.headers;
   }
 

@@ -1,7 +1,5 @@
 module.exports = function () {
-  const { resolve } = global.Utils;
   return {
-    PAGES: resolve(__dirname, './src/pages'),
     db: {
       master: {
         connectionLimit: 10,

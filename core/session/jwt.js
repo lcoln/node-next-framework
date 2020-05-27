@@ -9,14 +9,13 @@ class Jwt {
     let header = { typ: 'JWT', alg: 'HS256' };
     let payload = { token, expires: Date.now() + ttl * 1000 };
 
-    header = global.Sec.base64encode(header);
-    payload = global.Sec.base64encode(payload);
-    const signature = global.Sec.sha256(`${header}.${payload}`, screct);
-
+    header = global.Sec.base64encode(JSON.stringify(header));
+    payload = global.Sec.base64encode(JSON.stringify(payload));
+    const signature = global.Sec.sha256(`${header}.${payload}`, screct).toString('hex');
     this.body = {
       header,
       payload,
-      signature,
+      signature: `${signature}`,
     };
 
     return `${header}.${payload}.${signature}`;
@@ -31,13 +30,13 @@ class Jwt {
         const payload = auth[1];
         const signature = auth[2];
         try {
-          const tmp = global.Sec.base64decode(payload);
+          const tmp = JSON.parse(global.Sec.base64decode(payload));
           if (tmp.expires < Date.now()) {
             return '授权已过期';
           }
         // eslint-disable-next-line no-empty
         } catch (e) {}
-        return auth.length && global.Sec.sha256(`${header}.${payload}`, screct) === signature;
+        return auth.length && global.Sec.sha256(`${header}.${payload}`, screct).toString('hex') === signature;
       }
     }
     return false;
@@ -45,7 +44,7 @@ class Jwt {
 
   verify() {
     const { white } = this.config;
-    if (white && white.length && white.some((v) => this.ctx.request.pathname.indexOf(v) > -1)) {
+    if (white && white.length && white.includes(this.ctx.request.pathname)) {
       return true;
     }
     return this.decode(this.ctx.request.headers('Authorization'));

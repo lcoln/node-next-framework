@@ -9,13 +9,18 @@ const withImages = require('next-images');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const withTM = require('next-transpile-modules')(['antd']);
 
+// const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const {
   cwd, isProd, project, packageJson,
 } = require('./scripts/env');
 
 const baseCdn = isProd ? 'https://static.igeekee.cn/projs' : '';
 
-const { version, name } = packageJson;
+const {
+  version,
+  name,
+} = packageJson;
 
 module.exports = (phase) => {
   const assetPrefix = '';
@@ -26,6 +31,7 @@ module.exports = (phase) => {
     '@': path.join(cwd, 'projects', project, 'src'),
     pages: path.join(cwd, 'projects', project, 'src', 'pages'),
     projects: projectsDir,
+    'lib-provider': path.join(cwd, 'projects', 'lib-provider'),
   };
   /* if (typeof require !== 'undefined') {
     require.extensions['.css'] = (file) => {};
@@ -50,13 +56,12 @@ module.exports = (phase) => {
 
       // console.log(config.module.rules[4]);
       // config.module.rules[4].use = [
-      //   // {
-      //   //   loader: MiniCssExtractPlugin.loader,
-      //   // },
-      //   'extracted-loader',
-      //   // '/Users/linteng/www/www.upgrade/node-next-framework/node_modules/mini-css-extract-plugin/dist/loader.js',
-      //   // 'style-loader',
-      //   'isomorphic-style-loader',
+      //   {
+      //     loader: MiniCssExtractPlugin.loader,
+      //     options: {
+      //       hmr: process.env.NODE_ENV === 'development',
+      //     },
+      //   },
       //   'css-loader',
       //   'postcss-loader',
       //   'less-loader',
@@ -74,6 +79,9 @@ module.exports = (phase) => {
         //   // config.optimization.splitChunks.cacheGroups.styles.maxSize = 10000;
         //   config.optimization.splitChunks.cacheGroups.styles.chunks = 'async';
         // }
+        config.externals.push({
+          electron: 'require("electron")',
+        });
 
         config.module.rules.push({
           test: /\.(css|less)$/,
