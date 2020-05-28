@@ -10,7 +10,7 @@ const withImages = require('next-images');
 const withTM = require('next-transpile-modules')(['antd']);
 
 // const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+// const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const {
   cwd, isProd, project, packageJson,
 } = require('./scripts/env');
@@ -80,7 +80,12 @@ module.exports = (phase) => {
         //   config.optimization.splitChunks.cacheGroups.styles.chunks = 'async';
         // }
         config.externals.push({
-          electron: 'require("electron")',
+          electron: `(function () {
+            if (typeof require !== 'undefined') {
+              return require("electron")
+            }
+            return null
+          })()`,
         });
 
         config.module.rules.push({
