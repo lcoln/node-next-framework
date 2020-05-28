@@ -43,9 +43,9 @@ class Jwt {
   }
 
   verify() {
-    const { white } = this.config;
+    const { routes } = this.config;
     const { pathname } = this.ctx.request;
-    if (white && white.length && white.some((v) => pathname.slice(0, v.length) === v)) {
+    if (routes && routes.length && routes.some((v) => pathname.slice(0, v.length) === v)) {
       return true;
     }
     return this.decode(this.ctx.request.headers('Authorization'));
