@@ -38,7 +38,7 @@ class M {
 
     const funcError = (e) => {
       const msg = ISDEBUG ? e.stack : '页面出错';
-      console.log(e, { stack: e.stack });
+      // console.log(e, { stack: e.stack });
       this.response.error('404', msg, true);
     };
 
@@ -53,6 +53,7 @@ class M {
         try {
           await App[func].apply(App, params);
         } catch (e) {
+          // console.log({ e });
           funcError(e);
         }
       } else {
