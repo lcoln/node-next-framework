@@ -43,12 +43,23 @@ class Jwt {
   }
 
   verify() {
-    const { routes } = this.config;
-    const { pathname } = this.ctx.request;
-    if (routes && routes.length && routes.some((v) => pathname.slice(0, v.length) === v)) {
-      return true;
-    }
     return this.decode(this.ctx.request.headers('Authorization'));
+  }
+
+  shouldJwt() {
+    const { pathname } = this.ctx.request;
+    const { routes } = this.config;
+    let shouldJwt = false;
+    if (routes) {
+      // 是否在忽略的接口名单里
+      const excludes = Utils.isArray(routes.excludes)
+        && !routes.excludes.some((v) => pathname.slice(0, v.length) === v);
+      // 是否在包含的接口名单里
+      const includes = Utils.isArray(routes.includes)
+        && routes.includes.some((v) => pathname.slice(0, v.length) === v);
+      shouldJwt = excludes && includes;
+    }
+    return shouldJwt;
   }
 }
 module.exports = Jwt;
