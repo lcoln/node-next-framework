@@ -9,10 +9,22 @@ function bind(ctx) {
   }
   return ctx;
 }
-
-function checkFields(para, fields) {
-  if (Object.empty(para)) {
+function checkFieldsArray(params, fields, key) {
+   if (!params) { 
     return 'params';
+   }
+   let check = true
+   for (const para of params) {
+    check = checkFields(para,fields)
+    if (check!== true)
+      return `${key}中的${check}`
+   }
+   return true;
+}
+function checkFields(para, fields) {
+  const check = true
+  if (Object.empty(para)) {
+    return  'params';
   }
 
   // eslint-disable-next-line no-unused-vars
@@ -20,6 +32,18 @@ function checkFields(para, fields) {
     if (!para[it] && para[it] !== 0) {
       return it;
     }
+    // if (Object.prototype.toString.call(para[it]) === '[object object]') {
+    //   check = checkFields(para[it],fields)
+    //   if (check!== true)
+    //     return check;
+    // }
+    // if (Object.prototype.toString.call(para[it]) === '[object Array]') {
+    //   for (const pItem of para[it]) {
+    //     check = checkFields(pItem,fields)
+    //     if (check!== true)
+    //       break
+    //   }
+    // }
   }
   return true;
 }
@@ -179,6 +203,13 @@ function connectStrBy(str, key = '-') {
   });
 }
 
+function cross(response, origin) {
+  response.setHeader('Access-Control-Allow-Origin', origin);
+  response.setHeader('Access-Control-Allow-Credentials', 'true');
+  response.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
+  response.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization, authorization');
+}
+
 module.exports = function (ctx) {
   return {
     resolve,
@@ -193,8 +224,10 @@ module.exports = function (ctx) {
     bind: bind.bind(ctx),
     query,
     checkFields,
+    checkFieldsArray,
     connectStrBy,
     defSingleProp,
+    cross,
   };
 };
 

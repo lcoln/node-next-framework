@@ -78,6 +78,7 @@ class M {
           const _this = this;
           (async function nextFunc(i) {
             if (!_this.__QUEUE__.length || _this.__QUEUE__.length <= i) {
+              // _this.router.init.call(_this);
               return;
             }
             const cb = _this.__QUEUE__[i];
@@ -87,7 +88,7 @@ class M {
               }
             }
           }(0));
-          this.router.init.call(this);
+          _this.router.init.call(_this);
         })
         .listen(port, '0.0.0.0');
     });

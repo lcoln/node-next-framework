@@ -11,7 +11,8 @@ class Jwt {
 
     header = global.Sec.base64encode(JSON.stringify(header));
     payload = global.Sec.base64encode(JSON.stringify(payload));
-    const signature = global.Sec.sha256(`${header}.${payload}`, screct).toString('hex');
+
+    const signature = global.Sec.hmac('sha256', `${header}.${payload}`, screct);
     this.body = {
       header,
       payload,
@@ -31,24 +32,39 @@ class Jwt {
         const signature = auth[2];
         try {
           const tmp = JSON.parse(global.Sec.base64decode(payload));
+          console.log({ tmp });
           if (tmp.expires < Date.now()) {
             return '授权已过期';
           }
         // eslint-disable-next-line no-empty
         } catch (e) {}
-        return auth.length && global.Sec.sha256(`${header}.${payload}`, screct).toString('hex') === signature;
+        // const test = global.Sec.sha256(`${header}.${payload}`, screct);
+        const sign = global.Sec.hmac('sha256', `${header}.${payload}`, screct);
+        // console.log({ test, signature });
+        return auth.length && sign === signature;
       }
     }
     return false;
   }
 
   verify() {
-    const { routes } = this.config;
-    const { pathname } = this.ctx.request;
-    if (routes && routes.length && routes.some((v) => pathname.slice(0, v.length) === v)) {
-      return true;
-    }
     return this.decode(this.ctx.request.headers('Authorization'));
+  }
+
+  shouldJwt() {
+    const { pathname } = this.ctx.request;
+    const { routes } = this.config;
+    let shouldJwt = false;
+    if (routes) {
+      // 是否在忽略的接口名单里
+      const excludes = Utils.isArray(routes.excludes)
+        && !routes.excludes.some((v) => pathname.slice(0, v.length) === v);
+      // 是否在包含的接口名单里
+      const includes = Utils.isArray(routes.includes)
+        && routes.includes.some((v) => pathname.slice(0, v.length) === v);
+      shouldJwt = excludes && includes;
+    }
+    return shouldJwt;
   }
 }
 module.exports = Jwt;

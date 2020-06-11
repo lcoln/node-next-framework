@@ -12,6 +12,9 @@ class M {
     this.pathname = pathname;
     this.origin = this.headers('origin');
     this.query = query;
+    this.put = this.post;
+    this.patch = this.post;
+    this.delete = this.post;
     tmpdir = global.Utils.resolve(__dirname, '../../upload');
   }
 

@@ -38,7 +38,7 @@ class M {
 
     const funcError = (e) => {
       const msg = ISDEBUG ? e.stack : '页面出错';
-      console.log(e, { stack: e.stack });
+      // console.log(e, { stack: e.stack });
       this.response.error('404', msg, true);
     };
 
@@ -46,17 +46,24 @@ class M {
       // console.log({params})
 
       // ssr资源
-      let App = require(global.Utils.resolve(APPS, act, 'controller'));
-      App = new App(this.request, this.response, this);
+      let App = {};
+      try {
+        App = require(global.Utils.resolve(APPS, act, 'controller'));
+        App = new App(this.request, this.response, this);
+      } catch (e) {
+        // console.log({ e });
+        return this.response.error('400', `${e}`);
+      }
       // console.log({ func });
       if (App[func]) {
         try {
           await App[func].apply(App, params);
         } catch (e) {
-          funcError(e);
+          // console.log({ e });
+          return funcError(e);
         }
       } else {
-        this.response.error('404', 'Func Not Found', true);
+        return this.response.error('404', 'Func Not Found', true);
       }
     } catch (e) {
       ssrRender();
