@@ -11,7 +11,8 @@ class Jwt {
 
     header = global.Sec.base64encode(JSON.stringify(header));
     payload = global.Sec.base64encode(JSON.stringify(payload));
-    const signature = global.Sec.sha256(`${header}.${payload}`, screct).toString('hex');
+
+    const signature = global.Sec.hmac('sha256', `${header}.${payload}`, screct);
     this.body = {
       header,
       payload,
@@ -31,12 +32,16 @@ class Jwt {
         const signature = auth[2];
         try {
           const tmp = JSON.parse(global.Sec.base64decode(payload));
+          console.log({ tmp });
           if (tmp.expires < Date.now()) {
             return '授权已过期';
           }
         // eslint-disable-next-line no-empty
         } catch (e) {}
-        return auth.length && global.Sec.sha256(`${header}.${payload}`, screct).toString('hex') === signature;
+        // const test = global.Sec.sha256(`${header}.${payload}`, screct);
+        const sign = global.Sec.hmac('sha256', `${header}.${payload}`, screct);
+        // console.log({ test, signature });
+        return auth.length && sign === signature;
       }
     }
     return false;
