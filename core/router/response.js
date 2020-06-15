@@ -37,9 +37,10 @@ class M {
     if (this.lock) {
       return;
     }
-    this.res.writeHead(200, type);
+    // console.log({ type });
     const out = { code, msg, data };
-    this.end(JSON.stringify(out));
+    this.res.writeHead(200, type).end(JSON.stringify(out));
+    // this.end(JSON.stringify(out));
   }
 
   end(msg) {

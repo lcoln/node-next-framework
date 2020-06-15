@@ -10,21 +10,20 @@ function bind(ctx) {
   return ctx;
 }
 function checkFieldsArray(params, fields, key) {
-   if (!params) { 
+  if (!params) {
     return 'params';
-   }
-   let check = true
-   for (const para of params) {
-    check = checkFields(para,fields)
-    if (check!== true)
-      return `${key}中的${check}`
-   }
-   return true;
+  }
+  let check = true;
+  for (const para of params) {
+    check = checkFields(para, fields);
+    if (check !== true) { return `${key}中的${check}`; }
+  }
+  return true;
 }
 function checkFields(para, fields) {
-  const check = true
+  const check = true;
   if (Object.empty(para)) {
-    return  'params';
+    return 'params';
   }
 
   // eslint-disable-next-line no-unused-vars
@@ -206,7 +205,7 @@ function connectStrBy(str, key = '-') {
 function cross(response, origin) {
   response.setHeader('Access-Control-Allow-Origin', origin);
   response.setHeader('Access-Control-Allow-Credentials', 'true');
-  response.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
+  response.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT,PATCH');
   response.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization, authorization');
 }
 
