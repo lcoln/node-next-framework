@@ -39,8 +39,8 @@ class M {
     }
     // console.log({ type });
     const out = { code, msg, data };
-    this.res.writeHead(200, type).end(JSON.stringify(out));
-    // this.end(JSON.stringify(out));
+    this.res.writeHead(200, type);
+    this.end(JSON.stringify(out));
   }
 
   end(msg) {
