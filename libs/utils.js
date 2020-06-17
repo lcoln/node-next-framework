@@ -9,22 +9,10 @@ function bind(ctx) {
   }
   return ctx;
 }
-function checkFieldsArray(params, fields, key) {
-   if (!params) { 
-    return 'params';
-   }
-   let check = true
-   for (const para of params) {
-    check = checkFields(para,fields)
-    if (check!== true)
-      return `${key}中的${check}`
-   }
-   return true;
-}
 function checkFields(para, fields) {
-  const check = true
+  // const check = true;
   if (Object.empty(para)) {
-    return  'params';
+    return 'params';
   }
 
   // eslint-disable-next-line no-unused-vars
@@ -44,6 +32,17 @@ function checkFields(para, fields) {
     //       break
     //   }
     // }
+  }
+  return true;
+}
+function checkFieldsArray(params, fields, key) {
+  if (!params) {
+    return 'params';
+  }
+  let check = true;
+  for (const para of params) {
+    check = checkFields(para, fields);
+    if (check !== true) { return `${key}中的${check}`; }
   }
   return true;
 }
@@ -176,11 +175,23 @@ function defSingleProp(obj, key, getter) {
         val = getter();
       }
       Object.defineProperty(obj, key, {
-        get() {
-          return val;
-        },
+        value: val,
         configurable: true,
       });
+      return val;
+    },
+    configurable: true,
+  });
+}
+
+function defSinglePropOfClass(clazz, key, getter) {
+  Object.defineProperty(clazz.prototype, key, {
+    get() {
+      if (this === clazz.prototype) {
+        return null;
+      }
+      const val = getter.call(this);
+      Object.defineProperty(this, key, { value: val, configurable: true });
       return val;
     },
     configurable: true,
@@ -200,6 +211,7 @@ function connectStrBy(str, key = '-') {
     if (rest[0]) {
       return `${key}${rest[0].toLocaleLowerCase()}`;
     }
+    return null;
   });
 }
 
@@ -227,10 +239,12 @@ module.exports = function (ctx) {
     checkFieldsArray,
     connectStrBy,
     defSingleProp,
+    defSinglePropOfClass,
     cross,
   };
 };
 
 module.exports.defSingleProp = defSingleProp;
+module.exports.defSinglePropOfClass = defSinglePropOfClass;
 module.exports.isFunction = isFunction;
 module.exports.deepClone = deepClone;

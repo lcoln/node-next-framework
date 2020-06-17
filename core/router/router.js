@@ -1,7 +1,7 @@
 /* eslint-disable prefer-spread */
 class M {
   async init() {
-    const { APPS, ISDEBUG, SSRS } = this.get();
+    const { APPS, ISDEBUG /* , SSRS */ } = this.get();
     // console.log({ APPS });
     const makeParams = () => {
       let params = this.request.pathname.split('/').filter((v) => v) || [];
@@ -44,30 +44,35 @@ class M {
 
     try {
       // console.log({params})
-
-      // ssr资源
-      let App = {};
-      try {
-        App = require(global.Utils.resolve(APPS, act, 'controller'));
-        App = new App(this.request, this.response, this);
-      } catch (e) {
-        // console.log({ e });
-        return this.response.error('400', `${e}`);
-      }
-      // console.log({ func });
-      if (App[func]) {
+      if (func[0] !== '_') {
+        // ssr资源
+        let App = {};
         try {
-          await App[func].apply(App, params);
+          App = require(global.Utils.resolve(APPS, act, 'controller'));
+          if (typeof App.prototype[func] !== 'function') {
+            this.response.error('404', 'Func Not Found', true);
+            return;
+          }
+          App = new App(this);
         } catch (e) {
           // console.log({ e });
-          return funcError(e);
+          this.response.error('400', `${e}`);
+          return;
         }
-      } else {
-        return this.response.error('404', 'Func Not Found', true);
+        // console.log({ func });
+        const val = App[func];
+        try {
+          await val.apply(App, params);
+          return;
+        } catch (e) {
+          // console.log({ e });
+          funcError(e);
+          return;
+        }
       }
-    } catch (e) {
-      ssrRender();
-    }
+    // eslint-disable-next-line no-empty
+    } catch (e) { }
+    ssrRender();
   }
 }
 
