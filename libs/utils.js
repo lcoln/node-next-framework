@@ -9,6 +9,7 @@ function bind(ctx) {
   }
   return ctx;
 }
+
 function checkFields(para, fields) {
   // const check = true;
   if (Object.empty(para)) {
@@ -218,7 +219,7 @@ function connectStrBy(str, key = '-') {
 function cross(response, origin) {
   response.setHeader('Access-Control-Allow-Origin', origin);
   response.setHeader('Access-Control-Allow-Credentials', 'true');
-  response.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
+  response.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT,PATCH,DELETE');
   response.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization, authorization');
 }
 
