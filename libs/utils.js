@@ -168,6 +168,12 @@ function deepClone(obj) {
   throw new Error("Unable to copy obj! Its type isn't supported.");
 }
 
+/**
+ * 面向对象实现按需加载实例
+ * @param {Class} clazz // 原始对象
+ * @param {String} key // 通过这个key来按需实例
+ * @param {Function} getter // 进行实例的函数
+ */
 function defSingleProp(obj, key, getter) {
   let val;
   Object.defineProperty(obj, key, {
@@ -185,13 +191,22 @@ function defSingleProp(obj, key, getter) {
   });
 }
 
+/**
+ * 面向类实现按需加载实例
+ * @param {Class} clazz // 原始类
+ * @param {String} key // 通过这个key来按需实例
+ * @param {Function} getter // 进行实例的函数
+ */
 function defSinglePropOfClass(clazz, key, getter) {
   Object.defineProperty(clazz.prototype, key, {
+    // this指向clazz
     get() {
       if (this === clazz.prototype) {
         return null;
       }
+      // 进行实例, 并把实例的this指向clazz
       const val = getter.call(this);
+      // 最终把实例挂载在clazz上, 通过key调用后按需引用
       Object.defineProperty(this, key, { value: val, configurable: true });
       return val;
     },
