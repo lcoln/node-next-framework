@@ -7,12 +7,10 @@ class M {
 
   async init() {
     const { APPS, ISDEBUG /* , SSRS */ } = this.ctx.get();
-    // console.log({ APPS });
     const { act, func, params } = this.makeParams();
     try {
-      // console.log({params})
+      // 以'_'开头的函数为私有函数
       if (func[0] !== '_') {
-        // ssr资源
         let App = {};
         try {
           App = require(global.Utils.resolve(APPS, act, 'controller'));
@@ -22,18 +20,15 @@ class M {
           }
           App = new App(this.ctx);
         } catch (e) {
-          // console.log({ e });
           this.ctx.response.error('400', `${e}`);
           return;
         }
-        // console.log({ func });
         const val = App[func];
         try {
           await val.apply(App, params);
           return;
         } catch (e) {
           const msg = ISDEBUG ? e.stack : '页面出错';
-          // console.log(e, { stack: e.stack });
           this.ctx.response.error('404', msg, true);
           return;
         }
