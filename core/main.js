@@ -4,7 +4,7 @@ const Crypto = require('crypto.js');
 const Next = require('next');
 const Fs = require('iofs');
 const Mysql = require('./dbmanager/mysql');
-const Context = require('./Context');
+const Context = require('./context');
 
 const utils = require('../libs/utils');
 const config = require('./configure');
