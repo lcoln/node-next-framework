@@ -8,6 +8,7 @@ const Context = require('./context');
 
 const utils = require('../libs/utils');
 const config = require('./configure');
+const crosMiddleWare = require('../libs/middleware/cros');
 // let Mysql = require('mysqli')
 const dev = process.env.NODE_ENV !== 'production';
 
@@ -21,7 +22,8 @@ class M {
     global.Fs = Fs;
     global.APP = this;
     this.__CONFIG__ = config() || {};
-    this.__QUEUE__ = [];
+    // 预先加载options处理与跨域处理中间件
+    this.__QUEUE__ = [crosMiddleWare.optionsHandler, crosMiddleWare.corsHandler];
     this._init(rootDir);
   }
 
@@ -68,13 +70,6 @@ class M {
           if (/(_next|favicon.ico|static\/chunks)/.test(ctx.request.pathname)) {
             await ctx.router.init();
             await ctx.response.end();
-            return;
-          }
-          // options请求处理
-          if (ctx.request.req.method === 'OPTIONS') {
-            Utils.cross(ctx.response, '*');
-            ctx.response.send(200);
-            ctx.response.end();
             return;
           }
           const nextFunc = async function () {
