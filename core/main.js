@@ -70,6 +70,13 @@ class M {
             await ctx.response.end();
             return;
           }
+          // options请求处理
+          if (ctx.request.req.method === 'OPTIONS') {
+            Utils.cross(ctx.response, '*');
+            ctx.response.send(200);
+            ctx.response.end();
+            return;
+          }
           const nextFunc = async function () {
             i++;
             if (!ctx.__QUEUE__.length || ctx.__QUEUE__.length <= i) {
