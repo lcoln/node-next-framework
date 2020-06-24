@@ -29,7 +29,7 @@ class M {
     if (this.lock) {
       return;
     }
-    this.code = code;
+    this.code = 200;
     this.setHeader('Content-Type', type['Content-Type']);
     // this.res.writeHead(code, type);
     const out = { code, msg, data };
@@ -48,7 +48,7 @@ class M {
     }
     // console.log({ type });
     const out = { code, msg, data };
-    this.code = code;
+    this.code = 200;
     this.setHeader('Content-Type', type['Content-Type']);
     // this.res.writeHead(200, type);
     this.body = JSON.stringify(out);
