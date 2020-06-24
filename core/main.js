@@ -3,37 +3,32 @@ const Http = require('http');
 const Crypto = require('crypto.js');
 const Next = require('next');
 const Fs = require('iofs');
-const Request = require('./router/request');
-const Response = require('./router/response');
-const Router = require('./router/router');
-const RedisStrict = require('./session/redisStrict');
-const Redis = require('./session/redis');
-const Cookie = require('./session/cookie');
 const Mysql = require('./dbmanager/mysql');
-const Jwt = require('./session/jwt');
+const Context = require('./context');
 
 const utils = require('../libs/utils');
 const config = require('./configure');
+const crosMiddleWare = require('../libs/middleware/cros');
 // let Mysql = require('mysqli')
 const dev = process.env.NODE_ENV !== 'production';
 
 class M {
   constructor(rootDir) {
+    // eslint-disable-next-line no-proto
+    Context.prototype.__proto__ = this;
     global.Controller = require('./renderer/controller');
     global.Utils = utils(this);
     global.Sec = Crypto;
     global.Fs = Fs;
     global.APP = this;
     this.__CONFIG__ = config() || {};
-    this.__QUEUE__ = [];
+    // 预先加载options处理与跨域处理中间件
+    this.__QUEUE__ = [crosMiddleWare.optionsHandler, crosMiddleWare.corsHandler];
     this._init(rootDir);
   }
 
   _init(rootDir) {
-    this.template = global.Utils.bind(require('./renderer/template'));
-    this.router = new Router();
-    this.cookie = new Cookie(this);
-
+    // this.template = global.Utils.bind(require('./renderer/template'));
     this.ssr = Next({
       dev,
       dir: rootDir,
@@ -66,29 +61,30 @@ class M {
 
   start(port) {
     // console.log(this.get('session'));
-    this.sessionStrict = new RedisStrict(this.get('session') || {}, this);
-    this.session = new Redis(this.get('session') || {}, this);
-    this.jwt = new Jwt(this, this.get('JWT'));
 
     this.ssr.prepare().then(() => {
       Http
-        .createServer(async (request, response) => {
-          this.request = new Request(request);
-          this.response = new Response(response);
-          const _this = this;
-          (async function nextFunc(i) {
-            if (!_this.__QUEUE__.length || _this.__QUEUE__.length <= i) {
-              // _this.router.init.call(_this);
+        .createServer(async (req, resp) => {
+          const ctx = new Context(req, resp);
+          let i = -1;
+          if (/(_next|favicon.ico|static\/chunks)/.test(ctx.request.pathname)) {
+            await ctx.router.init();
+            await ctx.response.end();
+            return;
+          }
+          const nextFunc = async function () {
+            i++;
+            if (!ctx.__QUEUE__.length || ctx.__QUEUE__.length <= i) {
+              await ctx.router.init();
               return;
             }
-            const cb = _this.__QUEUE__[i];
+            const cb = ctx.__QUEUE__[i];
             if (global.Utils.isFunction(cb)) {
-              if (!/(_next|favicon.ico|static\/chunks)/.test(_this.request.pathname)) {
-                await cb(_this.request, _this.response, nextFunc.bind(null, i + 1));
-              }
+              await cb(ctx, nextFunc);
             }
-          }(0));
-          _this.router.init.call(_this);
+          };
+          await nextFunc();
+          ctx.response.end();
         })
         .listen(port, '0.0.0.0');
     });
