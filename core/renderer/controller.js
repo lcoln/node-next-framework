@@ -1,18 +1,13 @@
+const utils = require('../../libs/utils');
+
 class Controller {
   constructor(ctx) {
-    this.request = ctx.request;
-    this.response = ctx.response;
-    this.sessionStrict = ctx.sessionStrict;
-    this.session = ctx.session;
-    this.cookie = ctx.cookie;
-    this.jwt = ctx.jwt;
-    this.template = ctx.template;
     this.ctx = ctx;
     this._init();
   }
 
   _init() {
-    const jwt = this.ctx.get('jwt');
+    const jwt = this.ctx.get('JWT');
     if (jwt) {
       // this.jwtPass = this.jwt.verify()
     } else {
@@ -65,9 +60,14 @@ class Controller {
     // this.ctx.ssr.hotReloader.stop();
   }
 
-  assign(k, v) {
-    return this.template.assign(k, v);
-  }
+  // assign(k, v) {
+  //   return this.template.assign(k, v);
+  // }
 }
-
+utils.defSinglePropOfClass(Controller, 'request', function () { return this.ctx.request; });
+utils.defSinglePropOfClass(Controller, 'response', function () { return this.ctx.response; });
+utils.defSinglePropOfClass(Controller, 'sessionStrict', function () { return this.ctx.sessionStrict; });
+utils.defSinglePropOfClass(Controller, 'session', function () { return this.ctx.session; });
+utils.defSinglePropOfClass(Controller, 'cookie', function () { return this.ctx.cookie; });
+utils.defSinglePropOfClass(Controller, 'jwt', function () { return this.ctx.jwt; });
 module.exports = Controller;

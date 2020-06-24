@@ -9,22 +9,11 @@ function bind(ctx) {
   }
   return ctx;
 }
-function checkFieldsArray(params, fields, key) {
-   if (!params) { 
-    return 'params';
-   }
-   let check = true
-   for (const para of params) {
-    check = checkFields(para,fields)
-    if (check!== true)
-      return `${key}中的${check}`
-   }
-   return true;
-}
+
 function checkFields(para, fields) {
-  const check = true
+  // const check = true;
   if (Object.empty(para)) {
-    return  'params';
+    return 'params';
   }
 
   // eslint-disable-next-line no-unused-vars
@@ -44,6 +33,17 @@ function checkFields(para, fields) {
     //       break
     //   }
     // }
+  }
+  return true;
+}
+function checkFieldsArray(params, fields, key) {
+  if (!params) {
+    return 'params';
+  }
+  let check = true;
+  for (const para of params) {
+    check = checkFields(para, fields);
+    if (check !== true) { return `${key}中的${check}`; }
   }
   return true;
 }
@@ -168,6 +168,12 @@ function deepClone(obj) {
   throw new Error("Unable to copy obj! Its type isn't supported.");
 }
 
+/**
+ * 面向对象实现按需加载实例
+ * @param {Class} clazz // 原始对象
+ * @param {String} key // 通过这个key来按需实例
+ * @param {Function} getter // 进行实例的函数
+ */
 function defSingleProp(obj, key, getter) {
   let val;
   Object.defineProperty(obj, key, {
@@ -176,11 +182,32 @@ function defSingleProp(obj, key, getter) {
         val = getter();
       }
       Object.defineProperty(obj, key, {
-        get() {
-          return val;
-        },
+        value: val,
         configurable: true,
       });
+      return val;
+    },
+    configurable: true,
+  });
+}
+
+/**
+ * 面向类实现按需加载实例
+ * @param {Class} clazz // 原始类
+ * @param {String} key // 通过这个key来按需实例
+ * @param {Function} getter // 进行实例的函数
+ */
+function defSinglePropOfClass(clazz, key, getter) {
+  Object.defineProperty(clazz.prototype, key, {
+    // this指向clazz
+    get() {
+      if (this === clazz.prototype) {
+        return null;
+      }
+      // 进行实例, 并把实例的this指向clazz
+      const val = getter.call(this);
+      // 最终把实例挂载在clazz上, 通过key调用后按需引用
+      Object.defineProperty(this, key, { value: val, configurable: true });
       return val;
     },
     configurable: true,
@@ -200,13 +227,14 @@ function connectStrBy(str, key = '-') {
     if (rest[0]) {
       return `${key}${rest[0].toLocaleLowerCase()}`;
     }
+    return null;
   });
 }
 
 function cross(response, origin) {
   response.setHeader('Access-Control-Allow-Origin', origin);
   response.setHeader('Access-Control-Allow-Credentials', 'true');
-  response.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
+  response.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT,PATCH,DELETE');
   response.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization, authorization');
 }
 
@@ -227,10 +255,12 @@ module.exports = function (ctx) {
     checkFieldsArray,
     connectStrBy,
     defSingleProp,
+    defSinglePropOfClass,
     cross,
   };
 };
 
 module.exports.defSingleProp = defSingleProp;
+module.exports.defSinglePropOfClass = defSinglePropOfClass;
 module.exports.isFunction = isFunction;
 module.exports.deepClone = deepClone;
