@@ -9,7 +9,7 @@
 const ACCESS_KEY = 'VBvN33BnrqcaAqrbOHLD4EbTuIwxwjA_VSdUo6B5';
 const SECRET_KEY = 'fdSgoq2c71UX8rJ8luX5zf3BsC03TmDmbOdKnr7e';
 const store = {
-  imgtest: 'http://opb0x6v7w.bkt.clouddn.com',
+  imgtest: 'http://imgtest.clickwifi.net',
   merchant: 'http://phpyi268u.bkt.clouddn.com',
   igeekee: 'http://static.igeekee.cn',
   hotmall: 'http://ppmqx596q.bkt.clouddn.com',
