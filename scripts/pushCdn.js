@@ -1,7 +1,7 @@
 (async function () {
   const { project, packageJson } = require('./env');
   const { version, name } = packageJson;
-  const uploadqiniu = require('../libs/qiniu.js');
+  const uploadqiniu = require('../libs/qiniu/qiniu.js');
   const path = require('path');
   const excludeList = /\.DS_Store/g;
   const fs = require('iofs');

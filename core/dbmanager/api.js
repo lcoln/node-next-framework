@@ -188,12 +188,12 @@ class Table {
   query(sql, database) {
     const defer = Promise.defer();
     sql = this._fixSql(sql);
-    console.log({ sql });
+    // console.log({ sql });
     if (sql.length) {
       this.getConnection().then((conn) => {
-        console.log({ conn });
+        // console.log({ conn });
         conn.query({ sql, timeout: 100 }, (err, res) => {
-          console.log({ err, res });
+          // console.log({ err, res });
           if (err) {
             defer.reject(new SqlErr(`Sql Error, sql: ${sql}, Error: ${err}`, sql));
           } else {
