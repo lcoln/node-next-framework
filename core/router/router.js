@@ -29,7 +29,7 @@ class M {
           return;
         } catch (e) {
           const msg = ISDEBUG ? e.stack : '页面出错';
-          this.ctx.response.error('404', msg, true);
+          this.ctx.response.error('400', msg, true);
           return;
         }
       }
