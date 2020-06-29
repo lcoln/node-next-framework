@@ -32,7 +32,7 @@ class Jwt {
         const signature = auth[2];
         try {
           const tmp = JSON.parse(global.Sec.base64decode(payload));
-          console.log({ tmp });
+          // console.log({ tmp });
           if (tmp.expires < Date.now()) {
             return '授权已过期';
           }
