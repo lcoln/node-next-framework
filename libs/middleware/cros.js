@@ -21,6 +21,7 @@ module.exports = {
       const origin = ctx.request.headers('origin');
       const cors = ctx.get('cors') || [];
       let destOrigin = '';
+      console.log('middleware cros', { origin, cors, destOrigin });
       if (cors.some((v) => {
         destOrigin = v.indexOf(origin) > -1 ? v : '';
         return destOrigin;
