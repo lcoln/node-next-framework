@@ -2,6 +2,7 @@ const env = process.env.NODE_ENV;
 module.exports = {
   async optionsHandler(ctx, next) {
     // options处理
+    console.log({ send: ctx.response.send });
     if (ctx.request.req.method === 'OPTIONS') {
       Utils.cross(ctx.response, '*');
       ctx.response.send(200);
@@ -17,7 +18,7 @@ module.exports = {
       Utils.cross(ctx.response, '*');
     } else if (env === 'production') {
       // const host = ctx.request.headers('host');
-      const origin = ctx.response.headers('origin');
+      const origin = ctx.request.headers('origin');
       const cors = ctx.get('cors') || [];
       console.log('middleware cros', { origin, cors });
       if (cors.some((v) => v.indexOf(origin) > -1)) {
