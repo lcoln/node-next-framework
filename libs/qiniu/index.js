@@ -14,22 +14,27 @@ const store = {
   igeekee: 'http://static.igeekee.cn',
   hotmall: 'http://ppmqx596q.bkt.clouddn.com',
 };
+const M = {};
+const utils = require('../utils');
 
-module.exports = {
-  createUpToken(scope = 'merchant') {
-    scope = process.env.NODE_ENV === 'development' ? 'imgtest' : scope;
+function createUpToken(scope = 'merchant') {
+  scope = process.env.NODE_ENV === 'development' ? 'imgtest' : scope;
 
-    const domain = store[scope];
-    const para = {
-      scope,
-      deadline: Math.floor(Date.now() / 1000) + 3600,
-    };
+  const domain = store[scope];
+  const para = {
+    scope,
+    deadline: Math.floor(Date.now() / 1000) + 3600,
+  };
 
-    const encodePutPolicy = Sec.base64encode(JSON.stringify(para)).replace(/\+/g, '-').replace(/\//g, '_');
+  const encodePutPolicy = Sec.base64encode(JSON.stringify(para)).replace(/\+/g, '-').replace(/\//g, '_');
 
-    const encodedSign = Sec.hmac('sha1', encodePutPolicy, SECRET_KEY, 'base64').replace(/\+/g, '-').replace(/\//g, '_');
+  const encodedSign = Sec.hmac('sha1', encodePutPolicy, SECRET_KEY, 'base64').replace(/\+/g, '-').replace(/\//g, '_');
 
-    const accessToken = `${ACCESS_KEY}:${encodedSign}:${encodePutPolicy}`;
-    return { uptoken: accessToken, domain };
-  },
-};
+  const accessToken = `${ACCESS_KEY}:${encodedSign}:${encodePutPolicy}`;
+  return { uptoken: accessToken, domain };
+}
+
+utils.defSingleProp(M, 'createUpToken', () => createUpToken);
+utils.defSingleProp(M, 'uploadqiniu', () => require('./uploadqiniu'));
+
+module.exports = M;
