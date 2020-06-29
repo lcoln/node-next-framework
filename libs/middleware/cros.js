@@ -20,14 +20,9 @@ module.exports = {
       // const host = ctx.request.headers('host');
       const origin = ctx.request.headers('origin');
       const cors = ctx.get('cors') || [];
-      let destOrigin = '';
-      console.log('middleware cros', { origin, cors, destOrigin });
-      if (cors.some((v) => {
-        destOrigin = v.indexOf(origin) > -1 ? v : '';
-        return destOrigin;
-      })) {
-        console.log('middleware cros', { origin, cors, destOrigin });
-        Utils.cross(ctx.response, destOrigin);
+      if (cors.some((v) => v.indexOf(origin.replace(/(https|http):\/\//, '')) > -1)) {
+        console.log('middleware cros', { origin, cors });
+        Utils.cross(ctx.response, origin);
       }
       // if (cors.includes(host)) {
       //   Utils.cross(ctx.response, host);
