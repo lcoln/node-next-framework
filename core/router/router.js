@@ -12,24 +12,13 @@ class M {
       // 以'_'开头的函数为私有函数
       if (func[0] !== '_') {
         let App = {};
-        try {
-          App = require(global.Utils.resolve(APPS, act, 'controller'));
-          if (!Utils.isFunction(App.prototype[func])) {
-            this.ctx.response.error('404', 'Func Not Found', true);
-            return;
-          }
-          App = new App(this.ctx);
-        } catch (e) {
-          try {
-            this.ssrRender();
-          } catch (err) {
-            const msg = ISDEBUG ? e.stack : '页面出错';
-            // console.log(e, { stack: e.stack });
-            this.response.error('404', msg);
-          }
-          // this.ctx.response.error('400', `${e}`);
+        App = require(global.Utils.resolve(APPS, act, 'controller'));
+        if (!Utils.isFunction(App.prototype[func])) {
+          this.ctx.response.error('404', 'Func Not Found', true);
           return;
         }
+        App = new App(this.ctx);
+
         const val = App[func];
         try {
           await val.apply(App, params);
@@ -41,7 +30,17 @@ class M {
         }
       }
     // eslint-disable-next-line no-empty
-    } catch (e) { }
+    } catch (e) {
+      try {
+        this.ssrRender();
+      } catch (err) {
+        const msg = ISDEBUG ? e.stack : '页面出错';
+        // console.log(e, { stack: e.stack });
+        this.response.error('404', msg);
+      }
+      // this.ctx.response.error('400', `${e}`);
+      return;
+    }
     this.ssrRender();
   }
 
