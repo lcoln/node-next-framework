@@ -54,6 +54,7 @@ class Controller {
     path = path.split('/').map((v) => Utils.connectStrBy(v)).join('/');
     // console.log({ path, params });
     path = path && path.slice(-1) === '/' ? path.slice(0, -1) : path;
+    this.ctx.isSSR = true;
     this.ctx.ssr.render(req, res, path || pathname, params || query);
     // this.ctx.ssr.close();
     // this.ctx.ssr.stopWatcher();

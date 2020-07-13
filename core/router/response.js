@@ -20,6 +20,24 @@ class M {
     return this.res.getHeader(key);
   }
 
+  /**
+   * [redirect 页面跳转]
+   * @param  {String} url [要跳转的URL]
+   * @param  {Boolean} f   [是否永久重定向]
+   */
+  redirect(url, f = false) {
+    if (this.lock) {
+      return;
+    }
+    if (!/^(http[s]?|ftp):\/\//.test(url)) {
+      url = `//${url}`;
+    }
+
+    this.setHeader('Location', url);
+    this.sendwithRestful(f ? 301 : 302);
+    this.end('');
+  }
+
   sendwithRestful(
     code = 200,
     msg,
@@ -29,7 +47,7 @@ class M {
     if (this.lock) {
       return;
     }
-    this.code = 200;
+    this.code = code;
     this.setHeader('Content-Type', type['Content-Type']);
     // this.res.writeHead(code, type);
     const out = { code, msg, data };
@@ -84,6 +102,7 @@ class M {
       return;
     }
     this.res.writeHead(this.code, this.resHeader);
+    // console.log({ body: this.body, code: this.code, resHeader: this.resHeader });
     // for (const key of Object.keys(this.resHeader)) {
     //   try {
     //     this.res.setHeader(key, this.resHeader[key]);

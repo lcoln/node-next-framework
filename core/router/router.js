@@ -20,7 +20,14 @@ class M {
           }
           App = new App(this.ctx);
         } catch (e) {
-          this.ctx.response.error('400', `${e}`);
+          try {
+            this.ssrRender();
+          } catch (err) {
+            const msg = ISDEBUG ? e.stack : '页面出错';
+            // console.log(e, { stack: e.stack });
+            this.response.error('404', msg);
+          }
+          // this.ctx.response.error('400', `${e}`);
           return;
         }
         const val = App[func];
@@ -51,22 +58,10 @@ class M {
   }
 
   async ssrRender() {
+    this.ctx.isSSR = true;
     const { req, pathname, query } = this.ctx.request;
     const { res } = this.ctx.response;
     this.ctx.ssr.render(req, res, pathname, query);
-    /* try {
-      let SSR = require(global.Utils.resolve(SSRS, act, 'controller'));
-      SSR = new SSR(request, ctx.response, ctx);
-      if (SSR[func]) {
-        try {
-          await SSR[func].apply(SSR, params);
-        } catch (e) {
-          ctx.response.error('404', 'Func Not Found', true);
-        }
-      }
-    } catch (e) {
-      ctx.ssr.render(req, res, pathname, query);
-    } */
   }
 }
 
