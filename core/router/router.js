@@ -12,17 +12,13 @@ class M {
       // 以'_'开头的函数为私有函数
       if (func[0] !== '_') {
         let App = {};
-        try {
-          App = require(global.Utils.resolve(APPS, act, 'controller'));
-          if (!Utils.isFunction(App.prototype[func])) {
-            this.ctx.response.error('404', 'Func Not Found', true);
-            return;
-          }
-          App = new App(this.ctx);
-        } catch (e) {
-          this.ctx.response.error('400', `${e}`);
+        App = require(global.Utils.resolve(APPS, act, 'controller'));
+        if (!Utils.isFunction(App.prototype[func])) {
+          this.ctx.response.error('404', 'Func Not Found', true);
           return;
         }
+        App = new App(this.ctx);
+
         const val = App[func];
         try {
           await val.apply(App, params);
@@ -34,7 +30,17 @@ class M {
         }
       }
     // eslint-disable-next-line no-empty
-    } catch (e) { }
+    } catch (e) {
+      try {
+        this.ssrRender();
+      } catch (err) {
+        const msg = ISDEBUG ? e.stack : '页面出错';
+        // console.log(e, { stack: e.stack });
+        this.response.error('404', msg);
+      }
+      // this.ctx.response.error('400', `${e}`);
+      return;
+    }
     this.ssrRender();
   }
 
@@ -51,22 +57,10 @@ class M {
   }
 
   async ssrRender() {
+    this.ctx.isSSR = true;
     const { req, pathname, query } = this.ctx.request;
     const { res } = this.ctx.response;
     this.ctx.ssr.render(req, res, pathname, query);
-    /* try {
-      let SSR = require(global.Utils.resolve(SSRS, act, 'controller'));
-      SSR = new SSR(request, ctx.response, ctx);
-      if (SSR[func]) {
-        try {
-          await SSR[func].apply(SSR, params);
-        } catch (e) {
-          ctx.response.error('404', 'Func Not Found', true);
-        }
-      }
-    } catch (e) {
-      ctx.ssr.render(req, res, pathname, query);
-    } */
   }
 }
 
