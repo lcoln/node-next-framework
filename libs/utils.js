@@ -257,6 +257,7 @@ module.exports = function (ctx) {
     defSingleProp,
     defSinglePropOfClass,
     cross,
+    dateFormat: require('./dateFormat'),
   };
 };
 
