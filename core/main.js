@@ -15,7 +15,9 @@ const dev = process.env.NODE_ENV !== 'production';
 class M {
   constructor(rootDir) {
     // eslint-disable-next-line no-proto
-    Context.prototype.__proto__ = this;
+    // 已从web标准废弃
+    // Context.prototype.__proto__ = this;
+    Reflect.setPrototypeOf(Context.prototype, this);
     global.Controller = require('./renderer/controller');
     global.Utils = utils(this);
     global.Sec = Crypto;
