@@ -26,7 +26,6 @@ module.exports = {
     'react',
   ],
   parser: "babel-eslint",
-  ignorePatterns: ["config", "dist", "cdnConfig", "webpack", "node_modules/"],
   rules: {
     "linebreak-style": [0 ,"error", "windows"],
     "global-require": 0,
