@@ -1,16 +1,17 @@
 const path = require('path');
 
-const projectsDir = 'projects';
+// eslint-disable-next-line camelcase
+const { pm_exec_path } = process.env;
 
-const argv = process.argv.filter((v) => v.indexOf('projects') > -1)[0];
-// console.log({ argv }, process.argv);
-const index = argv ? argv.indexOf(projectsDir) + projectsDir.length + 1 : 0;
-const project = argv.slice(index).split(/[\\/]/)[0];
-// console.log({ ddd: __dirname }, project);
+const project = pm_exec_path.slice(
+  pm_exec_path.slice(0, -7).lastIndexOf('/') + 1,
+  -7,
+);
+// console.log({ project }, process.env.PWD);
 
 let packageJson = {};
 try {
-  packageJson = require(path.resolve(__dirname, '..', 'projects', project, 'package.json'));
+  packageJson = require(path.resolve(pm_exec_path.slice(0, -7), 'package.json'));
 } catch (e) {}
 
 const ENV = {
