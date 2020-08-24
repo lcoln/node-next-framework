@@ -4,7 +4,7 @@ const path = require('path');
 const { pm_exec_path } = process.env;
 
 const project = pm_exec_path.slice(
-  pm_exec_path.slice(0, -7).lastIndexOf('/') + 1,
+  pm_exec_path.slice(0, -7).lastIndexOf(path.sep) + 1,
   -7,
 );
 // console.log({ project }, process.env.PWD);
