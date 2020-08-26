@@ -15,7 +15,9 @@ const dev = process.env.NODE_ENV !== 'production';
 class M {
   constructor(rootDir) {
     // eslint-disable-next-line no-proto
-    Context.prototype.__proto__ = this;
+    // 已从web标准废弃
+    // Context.prototype.__proto__ = this;
+    Reflect.setPrototypeOf(Context.prototype, this);
     global.Controller = require('./renderer/controller');
     global.Utils = utils(this);
     global.Sec = Crypto;
@@ -68,8 +70,7 @@ class M {
           const ctx = new Context(req, resp);
           let i = -1;
           if (/(_next|favicon.ico|static\/chunks)/.test(ctx.request.pathname)) {
-            await ctx.router.init();
-            await ctx.response.end();
+            ctx.router.ssrRender();
             return;
           }
           const nextFunc = async function () {
@@ -84,7 +85,10 @@ class M {
             }
           };
           await nextFunc();
-          ctx.response.end();
+          // 如果不是走ssr则返回请求结果
+          if (!ctx.isSSR) {
+            ctx.response.end();
+          }
         })
         .listen(port, '0.0.0.0');
     });

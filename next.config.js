@@ -23,8 +23,8 @@ const {
 } = packageJson;
 
 module.exports = (phase) => {
-  const assetPrefix = '';
-  // const assetPrefix = isProd ? `${baseCdn}/${project}/${version}` : '';
+  // const assetPrefix = '';
+  const assetPrefix = isProd ? `${baseCdn}/${project}/${version}` : '';
   // console.log(__dirname);
   const projectsDir = path.join(cwd, 'projects');
   const aliases = {

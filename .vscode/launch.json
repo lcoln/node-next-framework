@@ -25,9 +25,9 @@
       ],
       "cwd": "${workspaceFolder}/projects/serve.isjike.com",
       "program": "${workspaceFolder}/projects/serve.isjike.com/app.js",
-      "args": ["projects/serve.isjike.com"],
       "env": {
-        "NODE_ENV": "development"
+        "NODE_ENV": "development",
+        "pm_exec_path": "D:\\jkwork\\codes\\h5\\node-next-framework\\projects\\serve.isjike.com\\app.js"
       },
     },
     {
