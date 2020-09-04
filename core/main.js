@@ -8,7 +8,7 @@ const Context = require('./context');
 
 const utils = require('../libs/utils');
 const config = require('./configure');
-const crosMiddleWare = require('../libs/middleware/cros');
+const commonMiddleWare = require('../libs/middleware');
 // let Mysql = require('mysqli')
 const dev = process.env.NODE_ENV !== 'production';
 
@@ -25,7 +25,7 @@ class M {
     global.APP = this;
     this.__CONFIG__ = config() || {};
     // 预先加载options处理与跨域处理中间件
-    this.__QUEUE__ = [crosMiddleWare.optionsHandler, crosMiddleWare.corsHandler];
+    this.__QUEUE__ = commonMiddleWare;
     this._init(rootDir);
   }
 

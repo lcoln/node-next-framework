@@ -26,6 +26,7 @@ class M {
         } catch (e) {
           const msg = ISDEBUG ? e.stack : '页面出错';
           this.ctx.response.error('400', msg, true);
+          // this.ctx.log.error(JSON.stringify(msg));
           return;
         }
       }
@@ -36,6 +37,7 @@ class M {
       } catch (err) {
         const msg = ISDEBUG ? e.stack : '页面出错';
         // console.log(e, { stack: e.stack });
+        // this.ctx.log.error(msg);
         this.response.error('404', msg);
       }
       // this.ctx.response.error('400', `${e}`);
