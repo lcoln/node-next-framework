@@ -62,16 +62,6 @@ function createLogContext(desc, result = {}, params, level, { requestId, req, re
 
 function Log(ctx) {
   this.ctx = ctx;
-  process.on('uncaughtException', (err, origin) => {
-    console.log(createLogContext(
-      `捕获的异常: ${err}\n异常的来源: ${origin}`, null, 'process:uncaughtException', ctx,
-    ));
-  });
-  process.on('exit', (code) => {
-    console.log(createLogContext(
-      `进程 exit 事件的代码: ${code}`, null, 'process:exit', ctx,
-    ));
-  });
 }
 
 /**
@@ -108,7 +98,7 @@ Log.prototype.error = function (desc, result, params) {
   if (logContext.code >= 400 && global[logContext.type]) {
     throw (global[logContext.type](logContext.msg));
   }
-  console.log(logContext.data);
+  console.log(JSON.stringify(logContext.data));
   return logContext;
 };
 Log.prototype.info = function (desc, result, params) {
@@ -116,7 +106,7 @@ Log.prototype.info = function (desc, result, params) {
   if (logContext.code >= 400 && global[logContext.type]) {
     throw (global[logContext.type](logContext.msg));
   }
-  console.log(logContext.data);
+  console.log(JSON.stringify(logContext.data));
   return logContext;
 };
 

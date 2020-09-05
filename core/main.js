@@ -1,4 +1,7 @@
+// 执行process异常监听
+require('./log/process');
 require('../libs/es.shim');
+
 const Http = require('http');
 const Crypto = require('crypto.js');
 const Next = require('next');
@@ -62,12 +65,10 @@ class M {
   }
 
   start(port) {
-    // console.log(this.get('session'));
-
     this.ssr.prepare().then(() => {
       Http
         .createServer(async (req, resp) => {
-          try{
+          try {
             const ctx = new Context(req, resp);
             let i = -1;
             if (/(_next|favicon.ico|static\/chunks)/.test(ctx.request.pathname)) {
@@ -91,7 +92,7 @@ class M {
               ctx.response.end();
             }
           } catch (e) {
-            // common error log
+            this.ctx.log.error('外层框架报错', e);
           }
         })
         .listen(port, '0.0.0.0');
