@@ -67,27 +67,31 @@ class M {
     this.ssr.prepare().then(() => {
       Http
         .createServer(async (req, resp) => {
-          const ctx = new Context(req, resp);
-          let i = -1;
-          if (/(_next|favicon.ico|static\/chunks)/.test(ctx.request.pathname)) {
-            ctx.router.ssrRender();
-            return;
-          }
-          const nextFunc = async function () {
-            i++;
-            if (!ctx.__QUEUE__.length || ctx.__QUEUE__.length <= i) {
-              await ctx.router.init();
+          try{
+            const ctx = new Context(req, resp);
+            let i = -1;
+            if (/(_next|favicon.ico|static\/chunks)/.test(ctx.request.pathname)) {
+              ctx.router.ssrRender();
               return;
             }
-            const cb = ctx.__QUEUE__[i];
-            if (global.Utils.isFunction(cb)) {
-              await cb(ctx, nextFunc);
+            const nextFunc = async function () {
+              i++;
+              if (!ctx.__QUEUE__.length || ctx.__QUEUE__.length <= i) {
+                await ctx.router.init();
+                return;
+              }
+              const cb = ctx.__QUEUE__[i];
+              if (global.Utils.isFunction(cb)) {
+                await cb(ctx, nextFunc);
+              }
+            };
+            await nextFunc();
+            // 如果不是走ssr则返回请求结果
+            if (!ctx.isSSR) {
+              ctx.response.end();
             }
-          };
-          await nextFunc();
-          // 如果不是走ssr则返回请求结果
-          if (!ctx.isSSR) {
-            ctx.response.end();
+          } catch (e) {
+            // common error log
           }
         })
         .listen(port, '0.0.0.0');

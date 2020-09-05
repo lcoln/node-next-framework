@@ -1,4 +1,7 @@
 /* eslint-disable no-unused-vars */
+
+const { cat } = require("iofs");
+
 /* eslint-disable prefer-spread */
 class M {
   constructor(ctx) {
@@ -12,7 +15,20 @@ class M {
       // 以'_'开头的函数为私有函数
       if (func[0] !== '_') {
         let App = {};
-        App = require(global.Utils.resolve(APPS, act, 'controller'));
+        try{
+          App = require(global.Utils.resolve(APPS, act, 'controller'));
+        }catch(e) {
+        }
+        if (!App) {
+          try {
+            this.ssrRender();
+          } catch (err) {
+            const msg = ISDEBUG ? e.stack : '页面出错';
+            this.response.error('404', msg);
+            // ssr error log
+          }
+          return;
+        }
         if (!Utils.isFunction(App.prototype[func])) {
           this.ctx.response.error('404', 'Func Not Found', true);
           return;
@@ -27,23 +43,22 @@ class M {
           const msg = ISDEBUG ? e.stack : '页面出错';
           this.ctx.response.error('400', msg, true);
           // this.ctx.log.error(JSON.stringify(msg));
+          // apps error log
           return;
         }
       }
     // eslint-disable-next-line no-empty
     } catch (e) {
-      try {
-        this.ssrRender();
-      } catch (err) {
-        const msg = ISDEBUG ? e.stack : '页面出错';
-        // console.log(e, { stack: e.stack });
-        // this.ctx.log.error(msg);
-        this.response.error('404', msg);
-      }
-      // this.ctx.response.error('400', `${e}`);
-      return;
+      // apps error log
+      return
     }
-    this.ssrRender();
+    try {
+      this.ssrRender();
+    } catch (err) {
+      const msg = ISDEBUG ? e.stack : '页面出错';
+      this.response.error('404', msg);
+      // ssr error log
+    }
   }
 
   makeParams() {
