@@ -59,7 +59,7 @@ class M {
     try {
       return this.__CONFIG__[key];
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       return null;
     }
   }

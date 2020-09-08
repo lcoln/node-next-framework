@@ -24,7 +24,7 @@ class M {
         this.slave = new Redis(slave);
       }
       this.ctx = ctx;
-    } catch (e) { console.log({ redisErr: e }); }
+    } catch (e) { }
   }
 
   start() {
