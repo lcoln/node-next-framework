@@ -71,4 +71,5 @@ utils.defSinglePropOfClass(Controller, 'sessionStrict', function () { return thi
 utils.defSinglePropOfClass(Controller, 'session', function () { return this.ctx.session; });
 utils.defSinglePropOfClass(Controller, 'cookie', function () { return this.ctx.cookie; });
 utils.defSinglePropOfClass(Controller, 'jwt', function () { return this.ctx.jwt; });
+utils.defSinglePropOfClass(Controller, 'log', function () { return this.ctx.log; });
 module.exports = Controller;

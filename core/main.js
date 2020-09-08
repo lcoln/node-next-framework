@@ -1,4 +1,7 @@
+// 执行process异常监听
+require('./log/process');
 require('../libs/es.shim');
+
 const Http = require('http');
 const Crypto = require('crypto.js');
 const Next = require('next');
@@ -8,7 +11,7 @@ const Context = require('./context');
 
 const utils = require('../libs/utils');
 const config = require('./configure');
-const crosMiddleWare = require('../libs/middleware/cros');
+const commonMiddleWare = require('../libs/middleware');
 // let Mysql = require('mysqli')
 const dev = process.env.NODE_ENV !== 'production';
 
@@ -25,7 +28,7 @@ class M {
     global.APP = this;
     this.__CONFIG__ = config() || {};
     // 预先加载options处理与跨域处理中间件
-    this.__QUEUE__ = [crosMiddleWare.optionsHandler, crosMiddleWare.corsHandler];
+    this.__QUEUE__ = commonMiddleWare;
     this._init(rootDir);
   }
 
@@ -62,32 +65,34 @@ class M {
   }
 
   start(port) {
-    // console.log(this.get('session'));
-
     this.ssr.prepare().then(() => {
       Http
         .createServer(async (req, resp) => {
-          const ctx = new Context(req, resp);
-          let i = -1;
-          if (/(_next|favicon.ico|static\/chunks)/.test(ctx.request.pathname)) {
-            ctx.router.ssrRender();
-            return;
-          }
-          const nextFunc = async function () {
-            i++;
-            if (!ctx.__QUEUE__.length || ctx.__QUEUE__.length <= i) {
-              await ctx.router.init();
+          try {
+            const ctx = new Context(req, resp);
+            let i = -1;
+            if (/(_next|favicon.ico|static\/chunks)/.test(ctx.request.pathname)) {
+              ctx.router.ssrRender();
               return;
             }
-            const cb = ctx.__QUEUE__[i];
-            if (global.Utils.isFunction(cb)) {
-              await cb(ctx, nextFunc);
+            const nextFunc = async function () {
+              i++;
+              if (!ctx.__QUEUE__.length || ctx.__QUEUE__.length <= i) {
+                await ctx.router.init();
+                return;
+              }
+              const cb = ctx.__QUEUE__[i];
+              if (global.Utils.isFunction(cb)) {
+                await cb(ctx, nextFunc);
+              }
+            };
+            await nextFunc();
+            // 如果不是走ssr则返回请求结果
+            if (!ctx.isSSR) {
+              ctx.response.end();
             }
-          };
-          await nextFunc();
-          // 如果不是走ssr则返回请求结果
-          if (!ctx.isSSR) {
-            ctx.response.end();
+          } catch (e) {
+            this.ctx.log.error('外层框架报错', e);
           }
         })
         .listen(port, '0.0.0.0');

@@ -1,8 +1,9 @@
 // const msg = require('./http-code-msg.json');
 
 class M {
-  constructor(res) {
+  constructor(res, requestId) {
     this.res = res;
+    this.requestId = requestId;
     this.lock = false; // 如果同时发送两次请求将锁住
     // this.code
     this.resHeader = { };
@@ -50,7 +51,9 @@ class M {
     this.code = code;
     this.setHeader('Content-Type', type['Content-Type']);
     // this.res.writeHead(code, type);
-    const out = { code, msg, data };
+    const out = {
+      code, msg, data, requestId: this.requestId,
+    };
     this.body = JSON.stringify(out);
     // this.end(JSON.stringify(out));
   }
@@ -65,7 +68,9 @@ class M {
       return;
     }
     // console.log({ type });
-    const out = { code, msg, data };
+    const out = {
+      code, msg, data, requestId: this.requestId,
+    };
     this.code = 200;
     this.setHeader('Content-Type', type['Content-Type']);
     // this.res.writeHead(200, type);
