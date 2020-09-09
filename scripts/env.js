@@ -1,7 +1,10 @@
 const path = require('path');
 
 // eslint-disable-next-line camelcase
-const { pm_exec_path } = process.env;
+let { pm_exec_path } = process.env;
+
+// eslint-disable-next-line camelcase
+pm_exec_path = pm_exec_path || `${process.cwd()}${path.sep}app.js`;
 
 const project = pm_exec_path.slice(
   pm_exec_path.slice(0, -7).lastIndexOf(path.sep) + 1,
