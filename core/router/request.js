@@ -61,7 +61,7 @@ class M {
       }).on('file', () => {
         // console.log({name, file}, 'file')
       }).on('error', (err) => {
-        console.log({ err }, 'error');
+        // console.log({ err }, 'error');
       })
         .on('aborted', () => {
         // console.log({}, 'aborted')

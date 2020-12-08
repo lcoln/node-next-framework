@@ -25,7 +25,7 @@ if (!JSON.parseTry) {
       try {
         this.result = rawParse(str);
       } catch (err) {
-        console.error(`JSON解析失败：${str}, ${err.stack}`);
+        // console.error(`JSON解析失败：${str}, ${err.stack}`);
         return this;
       }
       return this;

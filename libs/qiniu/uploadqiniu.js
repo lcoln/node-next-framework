@@ -116,7 +116,7 @@ async function uploadqiniu(url, uploadConfig = {
         const buff = res.data;
         const stream = new Duplex();
         const hasFile = await qiniuStat(filename);
-        console.log({ hasFile });
+        // console.log({ hasFile });
 
         if (hasFile) {
           return yes({ code: 201, url: host[bucket] + filename + suffix, sign: key });
@@ -187,7 +187,7 @@ async function uploadqiniu(url, uploadConfig = {
       if (respInfo && respInfo.statusCode === 614) {
         bucketManager.delete(options.scope, filename, async (err, respBody, respInfo) => {
           if (err) {
-            console.error(`Got error: ${err.message}`);
+            // console.error(`Got error: ${err.message}`);
             await uploadqiniu(url, uploadConfig);
           } else {
             await uploadqiniu(url, uploadConfig);
