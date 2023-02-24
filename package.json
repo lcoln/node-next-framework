@@ -29,6 +29,7 @@
     "next": "9.3.6",
     "next-images": "^1.4.0",
     "node-rsa": "^1.0.8",
+    "openai": "^3.1.0",
     "qiniu": "^7.3.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
@@ -59,6 +60,7 @@
     "less": "^3.11.1",
     "less-loader": "^6.1.0",
     "next-transpile-modules": "^3.3.0",
-    "style-loader": "^0.19.0"
+    "style-loader": "^0.19.0",
+    "webpack": "^5.75.0"
   }
 }

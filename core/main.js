@@ -65,7 +65,7 @@ class M {
   }
 
   start(port) {
-    this.ssr.prepare().then(() => {
+    // this.ssr.prepare().then(() => {
       Http
         .createServer(async (req, resp) => {
           try {
@@ -96,7 +96,7 @@ class M {
           }
         })
         .listen(port, '0.0.0.0');
-    });
+    // });
   }
 
   use(cb) {

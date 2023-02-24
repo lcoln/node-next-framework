@@ -1,3 +1,4 @@
+const dateFormat = require('../../libs/dateFormat')
 process.on('uncaughtException', (error, origin) => {
   const timestemp = Date.now();
   const err = ['code', 'message', 'name', 'stack'].reduce((item, next) => {
@@ -9,7 +10,7 @@ process.on('uncaughtException', (error, origin) => {
     level: origin,
     result: { error: err },
     timestemp,
-    date: Utils.dateFormat(timestemp),
+    date: dateFormat(timestemp),
   }));
   process.exit(1);
 });
