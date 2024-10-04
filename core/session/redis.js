@@ -28,6 +28,19 @@ class M {
       return result;
     });
   }
+  async pushMessageToQueue(queueName, message) {
+    await this.redis.lpush(queueName, message);
+  }
+  
+  async popMessageFromQueue(queueName) {
+    const result = await this.redis.brpop(queueName, 10);
+    if (result) {
+      return JSON.parse(result[1])
+    } else {
+      // throw new Error('Timeout')
+      return {msg: '队列已消费完毕', code: 200}
+    }
+  }
 
   // 获取session字段值, 需要yeild指令
   get(key) {

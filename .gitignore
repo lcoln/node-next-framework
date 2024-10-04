@@ -9,3 +9,5 @@
 /projects/*
 watcher.js
 .DS_Store
+node_modules1/
+upload

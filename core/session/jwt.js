@@ -56,11 +56,20 @@ class Jwt {
     const { routes } = this.config;
     let shouldJwt = false;
     if (routes) {
+      const hasExclides = Utils.isArray(routes.excludes)
+      const hasIncludes = Utils.isArray(routes.includes)
+      const defaultConfig = [
+        ...(hasExclides ? routes.excludes : []),
+        ...(hasIncludes ? routes.includes : []),
+      ]
+      if (!defaultConfig.some((v) => pathname.slice(0, v.length) === v)) {
+        return true
+      }
       // 是否在忽略的接口名单里
-      const excludes = Utils.isArray(routes.excludes)
+      const excludes = hasExclides
         && !routes.excludes.some((v) => pathname.slice(0, v.length) === v);
       // 是否在包含的接口名单里
-      const includes = Utils.isArray(routes.includes)
+      const includes = hasIncludes
         && routes.includes.some((v) => pathname.slice(0, v.length) === v);
       shouldJwt = excludes && includes;
     }
