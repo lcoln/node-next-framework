@@ -75,5 +75,13 @@ class Jwt {
     }
     return shouldJwt;
   }
+
+  async get(){
+    let jwt = await this.ctx.session.get(this.ctx.request.headers('x-token'));
+    try {
+      jwt = JSON.parse(jwt)
+    } catch (e) {}
+    return jwt;
+  }
 }
 module.exports = Jwt;
